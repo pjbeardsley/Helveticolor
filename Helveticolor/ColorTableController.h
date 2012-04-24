@@ -10,8 +10,22 @@
 
 @interface ColorTableController : NSObject {
     NSMutableArray *colors;
-    IBOutlet id colorTable;
-    
+    IBOutlet NSTableView * colorTable;
 }
+
+@property (assign) NSMutableArray * colors;
+@property (assign) NSTableView * colorTable;
+
+- (IBAction)addAtSelectedRow:(id)pId;
+- (IBAction)deleteSelectedRow:(id)pId;
+
+- (void)addRow:(NSString *)pColor;
+
+- (int)numberOfRowsInTableView:(NSTableView *)pTableViewObj;
+
+- (id) tableView:(NSTableView *)pTableViewObj objectValueForTableColumn:(NSTableColumn *)pTableColumn row:(int)pRowIndex;
+
+- (void)tableView:(NSTableView *)pTableViewObj setObjectValue:(id)pObject forTableColumn:(NSTableColumn *)pTableColumn row:(int)pRowIndex;
+
 
 @end
