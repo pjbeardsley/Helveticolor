@@ -13,8 +13,8 @@
     IBOutlet NSTableView * colorTable;
 }
 
-@property (assign) NSMutableArray * colors;
-@property (assign) NSTableView * colorTable;
+@property (retain) NSMutableArray * colors;
+@property (retain) NSTableView * colorTable;
 
 - (IBAction)addAtSelectedRow:(id)pId;
 - (IBAction)deleteSelectedRow:(id)pId;

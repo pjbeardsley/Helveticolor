@@ -10,6 +10,10 @@
 
 @implementation HelveticolorView
 
+@synthesize curColorIndex;
+@synthesize colorTableController;
+@synthesize configSheet;
+
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
@@ -17,15 +21,16 @@
         [self setAnimationTimeInterval:3.0];
     }
     
-    num_colors = 5;
-    colors = [NSMutableArray arrayWithCapacity: num_colors];
-    [colors addObject: @"2F798C"];
-    [colors addObject: @"463E3B"];
-    [colors addObject: @"B5AA2A"];
-    [colors addObject: @"BA591D"];
-    [colors addObject: @"E77D90"];
+    self.curColorIndex = 0;
     
-    cur_color_index = 0;
+    if (!self.configSheet)
+	{
+		if (![NSBundle loadNibNamed:@"ConfigSheet" owner:self]) 
+		{
+			NSLog( @"Failed to load configure sheet." );
+		}
+	}
+
     
     return self;
 }
@@ -71,16 +76,16 @@
 
 - (void)animateOneFrame
 {
-    NSString *color_string = [colors objectAtIndex: cur_color_index];
-    NSString *temp = [NSString stringWithString: @"#"];
-    NSString *display_string = [temp stringByAppendingString: color_string];
+    NSString *colorString = (NSString *)[[self.colorTableController colors] objectAtIndex: self.curColorIndex];
     
-    cur_color_index++;
-    if (cur_color_index >= (num_colors - 1)) {
-        cur_color_index = 0;
+    NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: colorString];
+    
+    self.curColorIndex++;
+    if (curColorIndex >= ([[colorTableController colors] count] - 1)) {
+        curColorIndex = 0;
     }
     
-    NSColor *color = [self colorFromHexRGB: color_string];
+    NSColor *color = [self colorFromHexRGB: colorString];
     
     NSSize size = [self bounds].size;
     
@@ -102,12 +107,14 @@
                                     NSForegroundColorAttributeName,
                                     nil];
     
-    NSAttributedString *currentText=[[NSAttributedString alloc] initWithString: display_string attributes: attributes];
+    NSAttributedString *currentText = [[NSAttributedString alloc] initWithString: displayString attributes: attributes];
     
     NSSize attrSize = [currentText size];
     int x_offset = (rect.size.width / 2) - (attrSize.width / 2);
     int y_offset = (rect.size.height / 2) - (attrSize.height / 2);
-    [currentText drawAtPoint:NSMakePoint(x_offset, y_offset)];    
+    [currentText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    
+    [currentText dealloc];
 }
 
 - (BOOL)hasConfigureSheet
@@ -115,17 +122,10 @@
     return YES;
 }
 
-- (NSWindow*)configureSheet
+- (NSWindow *)configureSheet
 {
-    if (!configSheet)
-	{
-		if (![NSBundle loadNibNamed:@"ConfigSheet" owner:self]) 
-		{
-			NSLog( @"Failed to load configure sheet." );
-		}
-	}
 		
-	return configSheet;
+	return self.configSheet;
 
 }
 
@@ -135,15 +135,21 @@
     
     
 	// Close the sheet
-	[[NSApplication sharedApplication] endSheet:configSheet];
+	[[NSApplication sharedApplication] endSheet:self.configSheet];
     
 }
 
 
 - (IBAction)cancelClick:(id)sender
 {
-    [[NSApplication sharedApplication] endSheet:configSheet];
+    [[NSApplication sharedApplication] endSheet:self.configSheet];
     
+}
+
+- (void) dealloc
+{
+    [self.colorTableController release];
+    [super dealloc];
 }
 
 
