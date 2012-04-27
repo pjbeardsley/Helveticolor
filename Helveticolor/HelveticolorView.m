@@ -10,6 +10,8 @@
 
 @implementation HelveticolorView
 
+static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
+
 @synthesize curColorIndex;
 @synthesize colorTableController;
 @synthesize configSheet;
@@ -17,20 +19,27 @@
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
+    
     if (self) {
+        
+        NSMutableArray * default_colors = [NSMutableArray array];
+        
+        [default_colors addObject: @"2F798C"];
+        [default_colors addObject: @"463E3B"];
+        [default_colors addObject: @"B5AA2A"];
+        [default_colors addObject: @"BA591D"];
+        [default_colors addObject: @"E77D90"];
+        
+        ScreenSaverDefaults * defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+        
+        [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
+                                    default_colors, @"colors",
+                                    nil]];
+        
         [self setAnimationTimeInterval:3.0];
     }
     
     self.curColorIndex = 0;
-    
-    if (!self.configSheet)
-	{
-		if (![NSBundle loadNibNamed:@"ConfigSheet" owner:self]) 
-		{
-			NSLog( @"Failed to load configure sheet." );
-		}
-	}
-
     
     return self;
 }
@@ -76,12 +85,16 @@
 
 - (void)animateOneFrame
 {
-    NSString *colorString = (NSString *)[[self.colorTableController colors] objectAtIndex: self.curColorIndex];
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
+    
+    NSArray *colors = [defaults arrayForKey: @"colors"];
+    
+    NSString *colorString = (NSString *)[colors objectAtIndex: self.curColorIndex];
     
     NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: colorString];
     
     self.curColorIndex++;
-    if (curColorIndex >= ([[colorTableController colors] count] - 1)) {
+    if (curColorIndex == [colors count]) {
         curColorIndex = 0;
     }
     
@@ -124,15 +137,29 @@
 
 - (NSWindow *)configureSheet
 {
-		
+            
+    if (!self.configSheet)
+	{
+		if (![NSBundle loadNibNamed:@"ConfigSheet" owner:self]) 
+		{
+			NSLog( @"Failed to load configure sheet." );
+		}
+	}
+    
 	return self.configSheet;
-
 }
 
 
 - (IBAction)okClick:(id)sender
 {
     
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
+    
+    // Update our defaults
+    [defaults setObject: [self.colorTableController colors] forKey:@"colors"];
+    
+    // Save the settings to disk
+    [defaults synchronize];
     
 	// Close the sheet
 	[[NSApplication sharedApplication] endSheet:self.configSheet];
@@ -144,12 +171,6 @@
 {
     [[NSApplication sharedApplication] endSheet:self.configSheet];
     
-}
-
-- (void) dealloc
-{
-    [self.colorTableController release];
-    [super dealloc];
 }
 
 

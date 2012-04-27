@@ -10,13 +10,13 @@
 #import "ColorTableController.h"
 
 @interface HelveticolorView : ScreenSaverView {
-    IBOutlet id configSheet;
     int curColorIndex;
+    IBOutlet id configSheet;
     IBOutlet ColorTableController * colorTableController;
 }
 
-@property (retain) id configSheet;
 @property (assign) int curColorIndex;
+@property (retain) id configSheet;
 @property (retain) ColorTableController * colorTableController;
 
 @end

@@ -6,25 +6,22 @@
 //  Copyright (c) 2012 N/A. All rights reserved.
 //
 
+#import <ScreenSaver/ScreenSaver.h>
 #import "ColorTableController.h"
 
 @implementation ColorTableController
+
+static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
 @synthesize colors;
 @synthesize colorTable;
 
 - (void)awakeFromNib {
     
-    NSLog(@"!!Pcb got here");
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
     
-    self.colors = [[NSMutableArray alloc] init];
-    
-    [self.colors addObject: [[NSMutableString alloc] initWithString: @"2F798C"]];
-    [self.colors addObject: [[NSMutableString alloc] initWithString: @"463E3B"]];
-    [self.colors addObject: [[NSMutableString alloc] initWithString: @"B5AA2A"]];
-    [self.colors addObject: [[NSMutableString alloc] initWithString: @"BA591D"]];
-    [self.colors addObject: [[NSMutableString alloc] initWithString: @"E77D90"]];
-    
+    self.colors = [NSMutableArray arrayWithArray:[defaults arrayForKey: @"colors"]];
+
     [self.colorTable reloadData];
     
 }
@@ -80,12 +77,5 @@
     [self.colors replaceObjectAtIndex: pRowIndex withObject: color];
         
 } 
-
-- (void) dealloc
-{
-    [self.colors release];
-    [super dealloc];
-}
-
 
 @end
