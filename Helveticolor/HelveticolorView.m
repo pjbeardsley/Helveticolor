@@ -7,6 +7,7 @@
 //
 
 #import "HelveticolorView.h"
+#import "Color.h"
 
 @implementation HelveticolorView
 
@@ -24,11 +25,11 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
         
         NSMutableArray * default_colors = [NSMutableArray array];
         
-        [default_colors addObject: @"2F798C"];
-        [default_colors addObject: @"463E3B"];
-        [default_colors addObject: @"B5AA2A"];
-        [default_colors addObject: @"BA591D"];
-        [default_colors addObject: @"E77D90"];
+        [default_colors addObject: [[Color alloc]initWithHexValue: @"2F798C"]];
+        [default_colors addObject: [[Color alloc]initWithHexValue: @"463E3B"]];
+        [default_colors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"]];
+        [default_colors addObject: [[Color alloc]initWithHexValue: @"BA591D"]];
+        [default_colors addObject: [[Color alloc]initWithHexValue: @"E77D90"]];
         
         ScreenSaverDefaults * defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
         
@@ -42,30 +43,6 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     self.curColorIndex = 0;
     
     return self;
-}
-
-- (NSColor *) colorFromHexRGB:(NSString *) inColorString
-{
-	NSColor *result = nil;
-	unsigned int colorCode = 0;
-	unsigned char redByte, greenByte, blueByte;
-	
-	if (nil != inColorString)
-	{
-		NSScanner *scanner = [NSScanner scannerWithString:inColorString];
-		(void) [scanner scanHexInt:&colorCode];	// ignore error
-	}
-    
-	redByte		= (unsigned char) (colorCode >> 16);
-	greenByte	= (unsigned char) (colorCode >> 8);
-	blueByte	= (unsigned char) (colorCode);	// masks off high bits
-    
-	result = [NSColor
-              colorWithCalibratedRed: (float)redByte	/ 0xff
-              green: (float)greenByte/ 0xff
-              blue:	(float)blueByte	/ 0xff
-              alpha: 1.0];
-	return result;
 }
 
 - (void)startAnimation
@@ -89,16 +66,16 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     
     NSArray *colors = [defaults arrayForKey: @"colors"];
     
-    NSString *colorString = (NSString *)[colors objectAtIndex: self.curColorIndex];
+    Color *color = (Color *)[colors objectAtIndex: self.curColorIndex];
     
-    NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: colorString];
+    NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
     
     self.curColorIndex++;
     if (curColorIndex == [colors count]) {
         curColorIndex = 0;
     }
     
-    NSColor *color = [self colorFromHexRGB: colorString];
+    NSColor *colorValue = [color colorValue];
     
     NSSize size = [self bounds].size;
     
@@ -107,7 +84,7 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     
     NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
 
-    [color set];    
+    [colorValue set];    
     [path fill];
     
     // calculate font point size based off screen height

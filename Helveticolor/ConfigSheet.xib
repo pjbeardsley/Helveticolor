@@ -13,6 +13,7 @@
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSUserDefaultsController</string>
 			<string>NSScroller</string>
+			<string>NSArrayController</string>
 			<string>NSButton</string>
 			<string>NSTextFieldCell</string>
 			<string>NSScrollView</string>
@@ -345,8 +346,15 @@
 			<object class="NSUserDefaultsController" id="1002270691">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
-			<object class="NSCustomObject" id="544287273">
-				<string key="NSClassName">ColorTableController</string>
+			<object class="NSArrayController" id="939749279">
+				<string key="NSObjectClassName">NSMutableString</string>
+				<bool key="NSEditable">YES</bool>
+				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -376,14 +384,6 @@
 					<int key="connectionID">21</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">colorTableController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="544287273"/>
-					</object>
-					<int key="connectionID">321</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: values.colorTable</string>
 						<reference key="source" ref="303615571"/>
@@ -400,44 +400,76 @@
 					<int key="connectionID">71</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataSource</string>
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">content: arrangedObjects</string>
 						<reference key="source" ref="210505728"/>
-						<reference key="destination" ref="544287273"/>
+						<reference key="destination" ref="939749279"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="210505728"/>
+							<reference key="NSDestination" ref="939749279"/>
+							<string key="NSLabel">content: arrangedObjects</string>
+							<string key="NSBinding">content</string>
+							<string key="NSKeyPath">arrangedObjects</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
 					</object>
-					<int key="connectionID">73</int>
+					<int key="connectionID">357</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="210505728"/>
-						<reference key="destination" ref="544287273"/>
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.hexValue</string>
+						<reference key="source" ref="218594702"/>
+						<reference key="destination" ref="939749279"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="218594702"/>
+							<reference key="NSDestination" ref="939749279"/>
+							<string key="NSLabel">value: arrangedObjects.hexValue</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.hexValue</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
 					</object>
-					<int key="connectionID">74</int>
+					<int key="connectionID">358</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.hexValue</string>
+						<reference key="source" ref="947676461"/>
+						<reference key="destination" ref="939749279"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="947676461"/>
+							<reference key="NSDestination" ref="939749279"/>
+							<string key="NSLabel">value: arrangedObjects.hexValue</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.hexValue</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">colorTable</string>
-						<reference key="source" ref="544287273"/>
+						<reference key="source" ref="939749279"/>
 						<reference key="destination" ref="210505728"/>
 					</object>
-					<int key="connectionID">75</int>
+					<int key="connectionID">352</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">addAtSelectedRow:</string>
-						<reference key="source" ref="544287273"/>
-						<reference key="destination" ref="430534979"/>
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: colors</string>
+						<reference key="source" ref="939749279"/>
+						<reference key="destination" ref="1002270691"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="939749279"/>
+							<reference key="NSDestination" ref="1002270691"/>
+							<string key="NSLabel">contentArray: colors</string>
+							<string key="NSBinding">contentArray</string>
+							<string key="NSKeyPath">colors</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
 					</object>
-					<int key="connectionID">314</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">deleteSelectedRow:</string>
-						<reference key="source" ref="544287273"/>
-						<reference key="destination" ref="149322825"/>
-					</object>
-					<int key="connectionID">315</int>
+					<int key="connectionID">368</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -829,11 +861,6 @@
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">72</int>
-						<reference key="object" ref="544287273"/>
-						<reference key="parent" ref="0"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">173</int>
 						<reference key="object" ref="430534979"/>
 						<array class="NSMutableArray" key="children">
@@ -1002,6 +1029,11 @@
 						<reference key="object" ref="566153486"/>
 						<reference key="parent" ref="1006"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">351</int>
+						<reference key="object" ref="939749279"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -1064,6 +1096,8 @@
 				<string key="308.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="309.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="310.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="351.CustomClassName">ColorTableController</string>
+				<string key="351.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<array class="NSMutableArray" key="4.IBNSViewMetadataConstraints">
 					<reference ref="665395004"/>
 				</array>
@@ -1078,7 +1112,6 @@
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="50.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="70.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="72.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="NO" key="8.IBNSViewMetadataTranslatesAutoresizingMaskIntoConstraints"/>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1087,27 +1120,13 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">321</int>
+			<int key="maxID">368</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
 					<string key="className">ColorTableController</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="addAtSelectedRow:">id</string>
-						<string key="deleteSelectedRow:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="addAtSelectedRow:">
-							<string key="name">addAtSelectedRow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="deleteSelectedRow:">
-							<string key="name">deleteSelectedRow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
+					<string key="superclassName">NSArrayController</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">colorTable</string>
 						<string key="NS.object.0">NSTableView</string>
