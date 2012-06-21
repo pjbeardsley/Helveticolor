@@ -10,11 +10,8 @@
 
 @interface ColorTableController : NSArrayController {
     NSMutableArray *colors;
-    IBOutlet NSTableView * colorTable;
 }
 
 @property (retain) NSMutableArray * colors;
-@property (retain) NSTableView * colorTable;
-
 
 @end

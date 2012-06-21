@@ -22,14 +22,46 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     self = [super initWithFrame:frame isPreview:isPreview];
     
     if (self) {
-        
+
         NSMutableArray * default_colors = [NSMutableArray array];
         
-        [default_colors addObject: [[Color alloc]initWithHexValue: @"2F798C"]];
-        [default_colors addObject: [[Color alloc]initWithHexValue: @"463E3B"]];
-        [default_colors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"]];
-        [default_colors addObject: [[Color alloc]initWithHexValue: @"BA591D"]];
-        [default_colors addObject: [[Color alloc]initWithHexValue: @"E77D90"]];
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setHTTPMethod:@"GET"];
+        [request setURL:[NSURL URLWithString:@"http://www.colourlovers.com/api/palettes/random"]];
+        
+        NSError *error = [[NSError alloc] init];
+        NSHTTPURLResponse *responseCode = nil;
+        
+        NSData *oResponseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
+        
+        
+        if([responseCode statusCode] == 200){
+            
+            
+            NSString *colorXml = [[NSString alloc] initWithData:oResponseData encoding:NSUTF8StringEncoding];
+                        
+            NSError *error;
+            NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithXMLString:colorXml options:0 error:&error];
+            
+            NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
+            
+            // NSLog(@"%@", colorNodes);
+            NSEnumerator *e = [colorNodes objectEnumerator];
+            NSXMLNode *curNode;
+            while (curNode = [e nextObject]) {
+                // NSLog(@"%@", [curNode objectValue]); 
+                [default_colors addObject: [[Color alloc]initWithHexValue: [curNode objectValue]]];
+            }
+            
+            
+        } else {
+            [default_colors addObject: [[Color alloc]initWithHexValue: @"2F798C"]];
+            [default_colors addObject: [[Color alloc]initWithHexValue: @"463E3B"]];
+            [default_colors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"]];
+            [default_colors addObject: [[Color alloc]initWithHexValue: @"BA591D"]];
+            [default_colors addObject: [[Color alloc]initWithHexValue: @"E77D90"]];            
+        }
+
         
         ScreenSaverDefaults * defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
         
