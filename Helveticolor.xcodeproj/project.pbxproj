@@ -14,6 +14,8 @@
 		D063F177152B5F6400C41757 /* ScreenSaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D063F176152B5F6400C41757 /* ScreenSaver.framework */; };
 		D063F181152B5F6400C41757 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D063F17F152B5F6400C41757 /* InfoPlist.strings */; };
 		D063F185152B5F6400C41757 /* HelveticolorView.m in Sources */ = {isa = PBXBuildFile; fileRef = D063F184152B5F6400C41757 /* HelveticolorView.m */; };
+		D0D7EB881594DA6100E21488 /* Palette.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D7EB861594DA6100E21488 /* Palette.h */; };
+		D0D7EB891594DA6100E21488 /* Palette.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D7EB871594DA6100E21488 /* Palette.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		D063F182152B5F6400C41757 /* Helveticolor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Helveticolor-Prefix.pch"; sourceTree = "<group>"; };
 		D063F183152B5F6400C41757 /* HelveticolorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelveticolorView.h; sourceTree = "<group>"; };
 		D063F184152B5F6400C41757 /* HelveticolorView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelveticolorView.m; sourceTree = "<group>"; };
+		D0D7EB861594DA6100E21488 /* Palette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Palette.h; sourceTree = "<group>"; };
+		D0D7EB871594DA6100E21488 /* Palette.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Palette.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +94,8 @@
 				D063F184152B5F6400C41757 /* HelveticolorView.m */,
 				B13CB886154E0EA9006A688E /* Color.h */,
 				B13CB887154E0EA9006A688E /* Color.m */,
+				D0D7EB861594DA6100E21488 /* Palette.h */,
+				D0D7EB871594DA6100E21488 /* Palette.m */,
 				D063F17D152B5F6400C41757 /* Supporting Files */,
 			);
 			path = Helveticolor;
@@ -114,6 +120,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B13CB888154E0EA9006A688E /* Color.h in Headers */,
+				D0D7EB881594DA6100E21488 /* Palette.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +200,7 @@
 			files = (
 				D063F185152B5F6400C41757 /* HelveticolorView.m in Sources */,
 				B13CB889154E0EA9006A688E /* Color.m in Sources */,
+				D0D7EB891594DA6100E21488 /* Palette.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
