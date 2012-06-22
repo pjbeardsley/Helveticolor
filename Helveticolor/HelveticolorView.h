@@ -7,16 +7,15 @@
 //
 
 #import <ScreenSaver/ScreenSaver.h>
-#import "ColorTableController.h"
 
 @interface HelveticolorView : ScreenSaverView {
     int curColorIndex;
     IBOutlet id configSheet;
-    IBOutlet ColorTableController * colorTableController;
 }
 
 @property (assign) int curColorIndex;
 @property (retain) id configSheet;
-@property (retain) ColorTableController * colorTableController;
+@property (retain) NSMutableArray *colors;
+@property (retain) NSDate *colorsLastUpdated;
 
 @end

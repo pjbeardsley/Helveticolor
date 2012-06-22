@@ -10,8 +10,6 @@
 		B13CB888154E0EA9006A688E /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = B13CB886154E0EA9006A688E /* Color.h */; };
 		B13CB889154E0EA9006A688E /* Color.m in Sources */ = {isa = PBXBuildFile; fileRef = B13CB887154E0EA9006A688E /* Color.m */; };
 		B13F77E7154636F800FBB308 /* ConfigSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13F77E6154636F800FBB308 /* ConfigSheet.xib */; };
-		B13F77EA1546439300FBB308 /* ColorTableController.h in Headers */ = {isa = PBXBuildFile; fileRef = B13F77E81546439300FBB308 /* ColorTableController.h */; };
-		B13F77EB1546439300FBB308 /* ColorTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B13F77E91546439300FBB308 /* ColorTableController.m */; };
 		D063F175152B5F6400C41757 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D063F174152B5F6400C41757 /* Cocoa.framework */; };
 		D063F177152B5F6400C41757 /* ScreenSaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D063F176152B5F6400C41757 /* ScreenSaver.framework */; };
 		D063F181152B5F6400C41757 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D063F17F152B5F6400C41757 /* InfoPlist.strings */; };
@@ -22,8 +20,6 @@
 		B13CB886154E0EA9006A688E /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		B13CB887154E0EA9006A688E /* Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Color.m; sourceTree = "<group>"; };
 		B13F77E6154636F800FBB308 /* ConfigSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfigSheet.xib; sourceTree = "<group>"; };
-		B13F77E81546439300FBB308 /* ColorTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorTableController.h; sourceTree = "<group>"; };
-		B13F77E91546439300FBB308 /* ColorTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorTableController.m; sourceTree = "<group>"; };
 		D063F171152B5F6400C41757 /* Helveticolor.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Helveticolor.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		D063F174152B5F6400C41757 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D063F176152B5F6400C41757 /* ScreenSaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenSaver.framework; path = System/Library/Frameworks/ScreenSaver.framework; sourceTree = SDKROOT; };
@@ -92,8 +88,6 @@
 			children = (
 				D063F183152B5F6400C41757 /* HelveticolorView.h */,
 				D063F184152B5F6400C41757 /* HelveticolorView.m */,
-				B13F77E81546439300FBB308 /* ColorTableController.h */,
-				B13F77E91546439300FBB308 /* ColorTableController.m */,
 				B13CB886154E0EA9006A688E /* Color.h */,
 				B13CB887154E0EA9006A688E /* Color.m */,
 				D063F17D152B5F6400C41757 /* Supporting Files */,
@@ -119,7 +113,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B13F77EA1546439300FBB308 /* ColorTableController.h in Headers */,
 				B13CB888154E0EA9006A688E /* Color.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -199,7 +192,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D063F185152B5F6400C41757 /* HelveticolorView.m in Sources */,
-				B13F77EB1546439300FBB308 /* ColorTableController.m in Sources */,
 				B13CB889154E0EA9006A688E /* Color.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

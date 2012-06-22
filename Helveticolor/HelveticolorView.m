@@ -8,68 +8,77 @@
 
 #import "HelveticolorView.h"
 #import "Color.h"
+#define ANIMATION_TIME_INTERVAL 3.0
+#define PALETTE_REFRESH_INTERVAL 30
 
 @implementation HelveticolorView
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
 @synthesize curColorIndex;
-@synthesize colorTableController;
 @synthesize configSheet;
+@synthesize colors;
+@synthesize colorsLastUpdated;
+
+- (void)refreshPaletteList
+{
+    [self.colors removeAllObjects];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setHTTPMethod:@"GET"];
+    [request setURL:[NSURL URLWithString:@"http://www.colourlovers.com/api/palettes/random"]];
+    
+    NSError *error;
+    NSHTTPURLResponse *responseCode = nil;
+    
+    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
+    
+    if([responseCode statusCode] == 200){
+        
+        
+        NSString *colorXml = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+        
+        NSError *error;
+        
+        NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithXMLString:colorXml options:0 error:&error];
+        
+        NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
+        
+        NSEnumerator *e = [colorNodes objectEnumerator];
+        NSXMLNode *curNode;
+        
+        while (curNode = [e nextObject]) {
+            [self.colors addObject: [[Color alloc]initWithHexValue: [curNode objectValue]]];
+        }
+        
+        [xmlDoc release];
+        [colorXml release];
+    } else {
+            [self.colors addObject: [[Color alloc]initWithHexValue: @"2F798C"]];
+            [self.colors addObject: [[Color alloc]initWithHexValue: @"463E3B"]];
+            [self.colors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"]];
+            [self.colors addObject: [[Color alloc]initWithHexValue: @"BA591D"]];
+            [self.colors addObject: [[Color alloc]initWithHexValue: @"E77D90"]];
+    }
+    
+    self.colorsLastUpdated = [NSDate date];
+    
+    NSLog(@"colors updated.");
+    
+    [request release];
+    [responseCode release];
+    
+}
 
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
     
     if (self) {
-
-        NSMutableArray * default_colors = [NSMutableArray array];
+        self.colors = [NSMutableArray array];
+        [self refreshPaletteList];
         
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        [request setHTTPMethod:@"GET"];
-        [request setURL:[NSURL URLWithString:@"http://www.colourlovers.com/api/palettes/random"]];
-        
-        NSError *error = [[NSError alloc] init];
-        NSHTTPURLResponse *responseCode = nil;
-        
-        NSData *oResponseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
-        
-        
-        if([responseCode statusCode] == 200){
-            
-            
-            NSString *colorXml = [[NSString alloc] initWithData:oResponseData encoding:NSUTF8StringEncoding];
-                        
-            NSError *error;
-            NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithXMLString:colorXml options:0 error:&error];
-            
-            NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
-            
-            // NSLog(@"%@", colorNodes);
-            NSEnumerator *e = [colorNodes objectEnumerator];
-            NSXMLNode *curNode;
-            while (curNode = [e nextObject]) {
-                // NSLog(@"%@", [curNode objectValue]); 
-                [default_colors addObject: [[Color alloc]initWithHexValue: [curNode objectValue]]];
-            }
-            
-            
-        } else {
-            [default_colors addObject: [[Color alloc]initWithHexValue: @"2F798C"]];
-            [default_colors addObject: [[Color alloc]initWithHexValue: @"463E3B"]];
-            [default_colors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"]];
-            [default_colors addObject: [[Color alloc]initWithHexValue: @"BA591D"]];
-            [default_colors addObject: [[Color alloc]initWithHexValue: @"E77D90"]];            
-        }
-
-        
-        ScreenSaverDefaults * defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
-        
-        [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    default_colors, @"colors",
-                                    nil]];
-        
-        [self setAnimationTimeInterval:3.0];
+        [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
     }
     
     self.curColorIndex = 0;
@@ -94,11 +103,13 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
 - (void)animateOneFrame
 {
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
-    
-    NSArray *colors = [defaults arrayForKey: @"colors"];
-    
-    Color *color = (Color *)[colors objectAtIndex: self.curColorIndex];
+    if (self.colorsLastUpdated != nil) {
+        if ([self.colorsLastUpdated timeIntervalSinceNow] <= -PALETTE_REFRESH_INTERVAL) {
+            [self refreshPaletteList];
+        }
+    }
+        
+    Color *color = (Color *)[self.colors objectAtIndex: self.curColorIndex];
     
     NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
     
@@ -111,7 +122,9 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     
     NSSize size = [self bounds].size;
     
-    NSRect rect;    
+    NSRect rect;
+    rect.origin.x = 0;
+    rect.origin.y = 0;
     rect.size = NSMakeSize(size.width, size.height);
     
     NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
@@ -136,7 +149,7 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     int y_offset = (rect.size.height / 2) - (attrSize.height / 2);
     [currentText drawAtPoint:NSMakePoint(x_offset, y_offset)];
     
-    [currentText dealloc];
+    [currentText release];
 }
 
 - (BOOL)hasConfigureSheet
@@ -165,7 +178,7 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
     
     // Update our defaults
-    [defaults setObject: [self.colorTableController colors] forKey:@"colors"];
+    //[defaults setObject: [self.colorTableController colors] forKey:@"colors"];
     
     // Save the settings to disk
     [defaults synchronize];
@@ -182,5 +195,11 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
     
 }
 
+- (void)dealloc
+{
+
+    [self.colors removeAllObjects];
+    [super dealloc];
+}
 
 @end
