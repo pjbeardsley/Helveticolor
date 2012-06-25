@@ -8,11 +8,13 @@
 
 #import "HelveticolorView.h"
 #import "Color.h"
+#import "Palette.h"
 
 @implementation HelveticolorView
 
 static double const ANIMATION_TIME_INTERVAL = 3.0;
-static int const PALETTE_REFRESH_INTERVAL   = -300;
+static int const PALETTE_CHANGE_INTERVAL = 30;
+static int const PALETTE_LIST_REFRESH_INTERVAL   = -600;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
@@ -21,37 +23,57 @@ static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/p
 static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top";
 
 @synthesize curColorIndex;
+@synthesize curPaletteIndex;
 @synthesize configSheet;
 @synthesize colors;
-@synthesize colorsLastUpdated;
+@synthesize palettes;
+@synthesize paletteListLastChanged;
+@synthesize paletteListLastUpdated;
 
 - (void)refreshPaletteList
 {
-    [self.colors removeAllObjects];
+    NSLog(@"!!pcb refreshing palette list");
+    NSLog(@"!!pcb debug: %@", self.palettes);
+    [self.palettes removeAllObjects];
     
     NSError *error = nil;
-    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString: RANDOM_PALETTE_URL] options:0 error:&error] autorelease];
+    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString: TOP_PALETTES_URL] options:0 error:&error] autorelease];
    
     if (nil != xmlDoc){
-        
-        NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
-        
-        NSEnumerator *e = [colorNodes objectEnumerator];
+        NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
+        NSEnumerator *e = [paletteNodes objectEnumerator];
         NSXMLNode *curNode;
-        
         while (curNode = [e nextObject]) {
-            [self.colors addObject: [[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
+            Palette *palette = [[[Palette alloc]initWithXMLNode: curNode] autorelease];
+
+            [self.palettes addObject: palette];
+            //            [self.palettes addObject: [[[Palette alloc]initWithXMLNode: curNode] autorelease]];
         }
         
+        
+//        NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
+//        
+//        NSEnumerator *e = [colorNodes objectEnumerator];
+//        NSXMLNode *curNode;
+//        
+//        while (curNode = [e nextObject]) {
+//            [self.colors addObject: [[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
+//        }
+        
     } else {
-        [self.colors addObject: [[[Color alloc]initWithHexValue: @"2F798C"] autorelease]];
-        [self.colors addObject: [[[Color alloc]initWithHexValue: @"463E3B"] autorelease]];
-        [self.colors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A"] autorelease]];
-        [self.colors addObject: [[[Color alloc]initWithHexValue: @"BA591D"] autorelease]];
-        [self.colors addObject: [[[Color alloc]initWithHexValue: @"E77D90"] autorelease]];
+        
+        NSMutableArray *defaultColors = [[NSMutableArray alloc] autorelease];
+        
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C"] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B"] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A"] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D"] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90"] autorelease]];
+        
+        [self.palettes addObject: [[[Palette alloc] initWithArray: defaultColors] autorelease]];
     }
     
-    self.colorsLastUpdated = [NSDate date];
+    self.paletteListLastUpdated = [NSDate date];
         
 }
 
@@ -66,6 +88,8 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
         [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
     }
     
+    self.curPaletteIndex = 0;
+    self.paletteListLastChanged = [NSDate date];
     self.curColorIndex = 0;
     
     return self;
@@ -88,19 +112,29 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
 
 - (void)animateOneFrame
 {
-    if (self.colorsLastUpdated != nil) {
-        if ([self.colorsLastUpdated timeIntervalSinceNow] <= PALETTE_REFRESH_INTERVAL) {
+    if (self.paletteListLastUpdated != nil) {
+        if ([self.paletteListLastUpdated timeIntervalSinceNow] <= PALETTE_LIST_REFRESH_INTERVAL) {
             [self refreshPaletteList];
         }
     }
-        
-    Color *color = (Color *)[self.colors objectAtIndex: self.curColorIndex];
+    
+    if (self.paletteListLastChanged != nil) {
+        self.curPaletteIndex++;
+        if (self.curPaletteIndex == [self.palettes count]) {
+            self.curPaletteIndex = 0;
+        }
+    }
+    
+    Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
+    
+    Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];
+    
     
     NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
     
     self.curColorIndex++;
-    if (curColorIndex == [self.colors count]) {
-        curColorIndex = 0;
+    if (self.curColorIndex == [palette.colors count]) {
+        self.curColorIndex = 0;
     }
     
     NSColor *colorValue = [color colorValue];

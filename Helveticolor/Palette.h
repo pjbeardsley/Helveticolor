@@ -20,6 +20,6 @@
 @property (copy) NSMutableArray *colors;
 
 - (id) initWithXMLNode: (NSXMLNode *)node;
-
+- (id) initWithArray: (NSMutableArray *)array;
 
 @end

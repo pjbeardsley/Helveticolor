@@ -7,6 +7,7 @@
 //
 
 #import "Palette.h"
+#import "Color.h"
 
 @implementation Palette
 
@@ -17,8 +18,25 @@
 
 - (id) initWithXMLNode: (NSXMLNode *)node
 {
-    return nil;
+    NSError *error = nil;
+
+    NSArray *colorNodes = [node nodesForXPath:@"colors/hex" error:&error];
+
+    NSEnumerator *e = [colorNodes objectEnumerator];
+    NSXMLNode *curNode;
+
+    while (curNode = [e nextObject]) {
+        [self.colors addObject: [[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
+    }
     
+    return self;
+}
+
+- (id) initWithArray:(NSMutableArray *)array
+{
+    [self.colors addObjectsFromArray: array];
+
+    return self;
 }
 
 @end
