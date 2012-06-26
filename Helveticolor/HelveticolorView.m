@@ -13,7 +13,7 @@
 @implementation HelveticolorView
 
 static double const ANIMATION_TIME_INTERVAL = 3.0;
-static int const PALETTE_CHANGE_INTERVAL = 30;
+static int const PALETTE_CHANGE_INTERVAL = -30;
 static int const PALETTE_LIST_REFRESH_INTERVAL   = -600;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
@@ -32,33 +32,19 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
 
 - (void)refreshPaletteList
 {
-    NSLog(@"!!pcb refreshing palette list");
-    NSLog(@"!!pcb debug: %@", self.palettes);
     [self.palettes removeAllObjects];
     
     NSError *error = nil;
-    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString: TOP_PALETTES_URL] options:0 error:&error] autorelease];
+    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString: NEW_PALETTES_URL] options:0 error:&error] autorelease];
    
     if (nil != xmlDoc){
         NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
         NSEnumerator *e = [paletteNodes objectEnumerator];
         NSXMLNode *curNode;
         while (curNode = [e nextObject]) {
-            Palette *palette = [[[Palette alloc]initWithXMLNode: curNode] autorelease];
-
-            [self.palettes addObject: palette];
-            //            [self.palettes addObject: [[[Palette alloc]initWithXMLNode: curNode] autorelease]];
+            [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
         }
-        
-        
-//        NSArray *colorNodes = [xmlDoc nodesForXPath:@"palettes/palette/colors/hex" error:&error];
-//        
-//        NSEnumerator *e = [colorNodes objectEnumerator];
-//        NSXMLNode *curNode;
-//        
-//        while (curNode = [e nextObject]) {
-//            [self.colors addObject: [[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
-//        }
+                
         
     } else {
         
@@ -83,6 +69,8 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
     
     if (self) {
         self.colors = [NSMutableArray array];
+        self.palettes = [NSMutableArray array];
+        
         [self refreshPaletteList];
         
         [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
@@ -119,18 +107,21 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
     }
     
     if (self.paletteListLastChanged != nil) {
-        self.curPaletteIndex++;
-        if (self.curPaletteIndex == [self.palettes count]) {
-            self.curPaletteIndex = 0;
+    
+        if ([self.paletteListLastChanged timeIntervalSinceNow] <= PALETTE_CHANGE_INTERVAL) {
+            self.curPaletteIndex++;
+            if (self.curPaletteIndex == [self.palettes count]) {
+                self.curPaletteIndex = 0;
+            }
+            self.paletteListLastChanged = [NSDate date];
+
         }
     }
-    
     Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
     
-    Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];
+    Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
     
-    
-    NSString *displayString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
+    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
     
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
@@ -139,6 +130,7 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
     
     NSColor *colorValue = [color colorValue];
     
+    // draw the background
     NSSize size = [self bounds].size;
     
     NSRect rect;
@@ -151,22 +143,39 @@ static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/p
     [colorValue set];    
     [path fill];
     
-    // calculate font point size based off screen height
+    // calculate hex color font point size based off screen height
     int font_size = (int)(rect.size.height * 0.25);
     
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *hexColorAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSFont fontWithName:@"Helvetica" size:font_size], 
                                     NSFontAttributeName,
                                     [NSColor whiteColor], 
                                     NSForegroundColorAttributeName,
                                     nil];
     
-    NSAttributedString *currentText = [[[NSAttributedString alloc] initWithString: displayString attributes: attributes] autorelease];
+    NSAttributedString *hexColorText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: hexColorAttributes] autorelease];
     
-    NSSize attrSize = [currentText size];
+    NSSize attrSize = [hexColorText size];
     int x_offset = (rect.size.width / 2) - (attrSize.width / 2);
     int y_offset = (rect.size.height / 2) - (attrSize.height / 2);
-    [currentText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    
+    // draw hex color
+    [hexColorText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    
+   NSDictionary *paletteTitleAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSFont fontWithName:@"Helvetica" size:48],
+                                    NSFontAttributeName,
+                                    [NSColor whiteColor], 
+                                    NSForegroundColorAttributeName,
+                                    nil];
+    
+    NSAttributedString *paletteTitleText = [[[NSAttributedString alloc] initWithString: palette.title attributes: paletteTitleAttributes] autorelease];
+    attrSize = [paletteTitleText size];
+
+    
+    x_offset = 10;
+    y_offset = 5;
+    [paletteTitleText drawAtPoint:NSMakePoint(x_offset, y_offset)];
 }
 
 - (BOOL)hasConfigureSheet

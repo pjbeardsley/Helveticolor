@@ -18,25 +18,54 @@
 
 - (id) initWithXMLNode: (NSXMLNode *)node
 {
-    NSError *error = nil;
+    if (self = [super init]) {
+        self.colors = [[NSMutableArray alloc] initWithCapacity:5];
+    }
 
+    NSError *error = nil;
+    
+    NSArray *titleNode = [node nodesForXPath:@"title" error:&error];
+    
+    if([titleNode count] == 1) {
+        self.title = [[titleNode objectAtIndex:0] objectValue];
+    }
+    
+    NSArray *userNameNode = [node nodesForXPath:@"userName" error:&error];
+    
+    if([userNameNode count] == 1) {
+        self.userName = [[userNameNode objectAtIndex:0] objectValue];
+    }
+    
     NSArray *colorNodes = [node nodesForXPath:@"colors/hex" error:&error];
 
     NSEnumerator *e = [colorNodes objectEnumerator];
     NSXMLNode *curNode;
 
     while (curNode = [e nextObject]) {
-        [self.colors addObject: [[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
+        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
     }
+    
+
     
     return self;
 }
 
 - (id) initWithArray:(NSMutableArray *)array
 {
+    
+    if (self = [super init]) {
+        self.colors = [[NSMutableArray alloc] initWithCapacity:5];
+    }
+    
     [self.colors addObjectsFromArray: array];
 
     return self;
+}
+
+- (void) dealloc
+{
+    [self.colors dealloc];
+    [super dealloc];
 }
 
 @end
