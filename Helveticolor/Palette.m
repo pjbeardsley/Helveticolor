@@ -19,7 +19,7 @@
 - (id) initWithXMLNode: (NSXMLNode *)node
 {
     if (self = [super init]) {
-        self.colors = [[NSMutableArray alloc] initWithCapacity:5];
+        self.colors = [NSMutableArray arrayWithCapacity:5];
     }
 
     NSError *error = nil;
@@ -54,18 +54,12 @@
 {
     
     if (self = [super init]) {
-        self.colors = [[NSMutableArray alloc] initWithCapacity:5];
+        self.colors = [NSMutableArray arrayWithCapacity:5];
     }
     
     [self.colors addObjectsFromArray: array];
 
     return self;
-}
-
-- (void) dealloc
-{
-    [self.colors dealloc];
-    [super dealloc];
 }
 
 @end

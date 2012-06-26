@@ -21,6 +21,5 @@
 
 - (id) initWithXMLNode: (NSXMLNode *)node;
 - (id) initWithArray: (NSMutableArray *)array;
-- (void) dealloc;
 
 @end
