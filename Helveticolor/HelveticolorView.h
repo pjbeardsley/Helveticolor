@@ -11,11 +11,13 @@
 @interface HelveticolorView : ScreenSaverView {
     int curColorIndex;
     IBOutlet id configSheet;
+    IBOutlet id showPaletteTypePopUpButton;
 }
 
 @property (assign) int curColorIndex;
 @property (assign) int curPaletteIndex;
 @property (retain) id configSheet;
+@property (retain) id showPaletteTypePopUpButton;
 @property (retain) NSMutableArray *colors;
 @property (retain) NSMutableArray *palettes;
 @property (retain) NSDate *paletteListLastChanged;

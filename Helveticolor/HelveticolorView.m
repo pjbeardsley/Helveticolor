@@ -13,18 +13,26 @@
 @implementation HelveticolorView
 
 static double const ANIMATION_TIME_INTERVAL = 3.0;
-static int const PALETTE_CHANGE_INTERVAL = -30;
-static int const PALETTE_LIST_REFRESH_INTERVAL   = -600;
+static int const    PALETTE_CHANGE_INTERVAL = -30;
+static int const    PALETTE_LIST_REFRESH_INTERVAL   = -600;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
+
+static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
+
+static int const SHOW_PALETTES_TYPE_TOP    = 0;
+static int const SHOW_PALETTES_TYPE_NEW    = 1;
+static int const SHOW_PALETTES_TYPE_RANDOM = 2;
 
 static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top";
 static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new";
 static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/palettes/random";
 
+
 @synthesize curColorIndex;
 @synthesize curPaletteIndex;
 @synthesize configSheet;
+@synthesize showPaletteTypePopUpButton;
 @synthesize colors;
 @synthesize palettes;
 @synthesize paletteListLastChanged;
@@ -36,14 +44,13 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
     
-    NSLog(@"!!pcb debug: %@", [defaults integerForKey:@"ShowPalettes"]);
     NSURL *url;
-    switch ([defaults integerForKey:@"ShowPalettes"])
+    switch ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue])
     {
-        case 1:
+        case SHOW_PALETTES_TYPE_NEW:
             url = [NSURL URLWithString: NEW_PALETTES_URL];
             break;
-        case 2:
+        case SHOW_PALETTES_TYPE_RANDOM:
             url = [NSURL URLWithString: RANDOM_PALETTE_URL];
             break;
         default:
@@ -85,13 +92,15 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     self = [super initWithFrame:frame isPreview:isPreview];
     
     if (self) {
-        
+                
         ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
         
         // Register our default values
         [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    @"0", @"ShowPalettes",
-                                    nil]];        
+                                    [NSNumber numberWithInt:SHOW_PALETTES_TYPE_TOP], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
+                                    nil]];   
+        
+        
         self.colors = [NSMutableArray array];
         self.palettes = [NSMutableArray array];
         
@@ -216,6 +225,14 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 			NSLog( @"Failed to load configure sheet." );
 		}
 	}
+
+    [self.showPaletteTypePopUpButton removeAllItems];
+    [self.showPaletteTypePopUpButton addItemWithTitle: @"Top Palettes"];
+    [self.showPaletteTypePopUpButton addItemWithTitle: @"Newest Palettes"];
+    [self.showPaletteTypePopUpButton addItemWithTitle: @"Random Palettes"];
+    
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
+    [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
     
 	return self.configSheet;
 }
@@ -227,7 +244,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
     
     // Update our defaults
-    //[defaults setObject: [self.colorTableController colors] forKey:@"colors"];
+    [defaults setObject:[NSNumber numberWithInt:[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY];
     
     // Save the settings to disk
     [defaults synchronize];
