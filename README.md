@@ -1,4 +1,4 @@
 Helveticolor
 ============
 
-OS X screensaver that displays custom palettes of hex color values in Helvetica. 
+A Mac OS X screensaver that displays COLOURLovers palettes with large type Helvetica.
