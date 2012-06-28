@@ -52,7 +52,6 @@
 
 - (id) initWithArray:(NSMutableArray *)array
 {
-    
     if (self = [super init]) {
         self.colors = [NSMutableArray arrayWithCapacity:5];
     }

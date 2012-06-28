@@ -13,8 +13,7 @@
 @implementation HelveticolorView
 
 static double const ANIMATION_TIME_INTERVAL = 3.0;
-static int const    PALETTE_CHANGE_INTERVAL = -30;
-static int const    PALETTE_LIST_REFRESH_INTERVAL   = -600;
+static int const    PALETTE_CHANGE_INTERVAL = -60;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
@@ -35,17 +34,15 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 @synthesize showPaletteTypePopUpButton;
 @synthesize colors;
 @synthesize palettes;
-@synthesize paletteListLastChanged;
-@synthesize paletteListLastUpdated;
+@synthesize paletteLastChanged;
+@synthesize firstTime;
 
-- (void)refreshPaletteList
+- (void)refreshPaletteListForType:(int) showPalettesType
 {
     [self.palettes removeAllObjects];
-
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
     
     NSURL *url;
-    switch ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue])
+    switch (showPalettesType)
     {
         case SHOW_PALETTES_TYPE_NEW:
             url = [NSURL URLWithString: NEW_PALETTES_URL];
@@ -72,19 +69,21 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
     } else {
         
-        NSMutableArray *defaultColors = [[NSMutableArray alloc] autorelease];
-        
+        NSMutableArray *defaultColors = [NSMutableArray array];
+            
         [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C"] autorelease]];
         [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B"] autorelease]];
         [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A"] autorelease]];
         [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D"] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90"] autorelease]];
-        
-        [self.palettes addObject: [[[Palette alloc] initWithArray: defaultColors] autorelease]];
-    }
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90"] autorelease]];    
     
-    self.paletteListLastUpdated = [NSDate date];
+        Palette *defaultPalette = [[[Palette alloc] initWithArray: defaultColors] autorelease];
+        defaultPalette.title = @"";
+        defaultPalette.userName = @"";
         
+        [self.palettes addObject: defaultPalette];
+    }
+            
 }
 
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
@@ -103,15 +102,16 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
         self.colors = [NSMutableArray array];
         self.palettes = [NSMutableArray array];
-        
-        [self refreshPaletteList];
+
+        [self refreshPaletteListForType:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
         
         [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
     }
     
     self.curPaletteIndex = 0;
-    self.paletteListLastChanged = [NSDate date];
+    self.paletteLastChanged = [NSDate date];
     self.curColorIndex = 0;
+    self.firstTime = YES;
     
     return self;
 }
@@ -133,36 +133,47 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 
 - (void)animateOneFrame
 {
-    if (self.paletteListLastUpdated != nil) {
-        if ([self.paletteListLastUpdated timeIntervalSinceNow] <= PALETTE_LIST_REFRESH_INTERVAL) {
-            [self refreshPaletteList];
-        }
+    
+    if (self.firstTime) {
+        Color *backgroundColor = [[[Color alloc]initWithHexValue: @"000000"] autorelease];
+        
+        [self drawFrameWithBackgroundColor:backgroundColor mainText:@"Helveticolor" secondaryText:@""];
+        
+        self.firstTime = NO;
+        return;
     }
     
-    if (self.paletteListLastChanged != nil) {
-    
-        if ([self.paletteListLastChanged timeIntervalSinceNow] <= PALETTE_CHANGE_INTERVAL) {
+    if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= PALETTE_CHANGE_INTERVAL)) {
+        ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+        
+        if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == SHOW_PALETTES_TYPE_RANDOM) {
+            [self refreshPaletteListForType:SHOW_PALETTES_TYPE_RANDOM];
+        } else {
             self.curPaletteIndex++;
             if (self.curPaletteIndex == [self.palettes count]) {
                 self.curPaletteIndex = 0;
             }
-            self.paletteListLastChanged = [NSDate date];
-
         }
+        
+        self.paletteLastChanged = [NSDate date];
     }
+    
     Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
     
     Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
-    
-    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
-    
+        
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
         self.curColorIndex = 0;
     }
+
+    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
     
-    NSColor *colorValue = [color colorValue];
-    
+    [self drawFrameWithBackgroundColor:color mainText:hexColorString secondaryText:[palette.title lowercaseString]];
+}
+
+- (void) drawFrameWithBackgroundColor: (Color *)backgroundColor mainText: (NSString *)mainText secondaryText: (NSString *)secondaryText
+{
     // draw the background
     NSSize size = [self bounds].size;
     
@@ -172,42 +183,48 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     rect.size = NSMakeSize(size.width, size.height);
     
     NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
-
-    [colorValue set];    
+    
+    [[backgroundColor colorValue] set];    
     [path fill];
     
-    // draw hex color
-
+    NSColor *textColor;
+    if ([backgroundColor hexValue] == @"FFFFFF") {
+        textColor = [NSColor blackColor];
+    } else {
+        textColor = [NSColor whiteColor];
+    }
+    
+    // draw primary text
     int font_size = (int)(rect.size.height * 0.25);
     
-    NSDictionary *hexColorAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
-                                        [NSColor whiteColor], NSForegroundColorAttributeName,
+                                        textColor, NSForegroundColorAttributeName,
                                         nil];
     
-    NSAttributedString *hexColorText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: hexColorAttributes] autorelease];
+    NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: mainText attributes: mainTextAttributes] autorelease];
     
-    NSSize attrSize = [hexColorText size];
+    NSSize attrSize = [mainAttributedText size];
     int x_offset = (rect.size.width / 2) - (attrSize.width / 2);
     int y_offset = (rect.size.height / 2) - (attrSize.height / 2);
     
-    [hexColorText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    [mainAttributedText drawAtPoint:NSMakePoint(x_offset, y_offset)];
     
-    // draw palette title
+    // draw secondary text
     font_size = (int)(rect.size.height * 0.04);
-
-    NSDictionary *paletteTitleAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
-                                            [NSColor whiteColor], NSForegroundColorAttributeName,
-                                            nil];
+    NSDictionary *secondaryTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
+                                             textColor, NSForegroundColorAttributeName,
+                                             nil];
     
-    NSAttributedString *paletteTitleText = [[[NSAttributedString alloc] initWithString: palette.title attributes: paletteTitleAttributes] autorelease];
-    attrSize = [paletteTitleText size];
-
+    NSAttributedString *secondaryAttributedText = [[[NSAttributedString alloc] initWithString: secondaryText attributes: secondaryTextAttributes] autorelease];
+    attrSize = [secondaryAttributedText size];
+    
     
     x_offset = size.width - attrSize.width - 10;
     y_offset = 5;
-    [paletteTitleText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    [secondaryAttributedText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    
 }
 
 - (BOOL)hasConfigureSheet
