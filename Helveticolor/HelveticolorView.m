@@ -41,7 +41,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 {
     [self.palettes removeAllObjects];
     
-    NSURL *url;
+    NSURL *url = nil;
     switch (showPalettesType)
     {
         case SHOW_PALETTES_TYPE_NEW:
@@ -61,7 +61,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     if (nil != xmlDoc){
         NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
         NSEnumerator *e = [paletteNodes objectEnumerator];
-        NSXMLNode *curNode;
+        NSXMLNode *curNode = nil;
         while (curNode = [e nextObject]) {
             [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
         }
@@ -104,13 +104,13 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         self.palettes = [NSMutableArray array];
 
         [self refreshPaletteListForType:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
-        
+
         [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
     }
     
     self.curPaletteIndex = 0;
     self.paletteLastChanged = [NSDate date];
-    self.curColorIndex = 0;
+    self.curColorIndex = -1;
     self.firstTime = YES;
     
     return self;
@@ -148,6 +148,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
         if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == SHOW_PALETTES_TYPE_RANDOM) {
             [self refreshPaletteListForType:SHOW_PALETTES_TYPE_RANDOM];
+            self.curColorIndex = -1;
         } else {
             self.curPaletteIndex++;
             if (self.curPaletteIndex == [self.palettes count]) {
@@ -160,17 +161,71 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
     
-    Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
-        
+
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
-        self.curColorIndex = 0;
+        self.curColorIndex = -1;
+        [self drawFullPaletteFrame:palette];
+        return;
     }
 
-    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: [color hexValue]];
+    Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
+
+    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
     
     [self drawFrameWithBackgroundColor:color mainText:hexColorString secondaryText:[palette.title lowercaseString]];
 }
+
+
+- (void) drawFullPaletteFrame: (Palette *)palette
+{
+    NSSize size = [self bounds].size;
+    int stepSize = round(size.width / 5);
+    int curXPos = 0;
+
+    NSEnumerator *e = [palette.colors objectEnumerator];
+    
+    Color *curColor = nil;
+    while (curColor = [e nextObject]) {
+        NSRect rect;
+        rect.origin.x = curXPos;
+        rect.origin.y = 0;
+        rect.size = NSMakeSize(stepSize, size.height);
+
+        NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
+
+        [[curColor colorValue] set];
+        [path fill];
+        
+        NSColor *textColor;
+        if ([curColor hexValue] == @"FFFFFF") {
+            textColor = [NSColor blackColor];
+        } else {
+            textColor = [NSColor whiteColor];
+        }
+        
+        
+        // draw primary text
+        int font_size = (int)(rect.size.height * 0.04);
+        
+        NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
+                                            textColor, NSForegroundColorAttributeName,
+                                            nil];
+        
+        NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: curColor.hexValue];        
+        NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
+                
+        NSSize attrSize = [mainAttributedText size];
+        int x_offset = curXPos + stepSize - (attrSize.width + 10);
+
+        [mainAttributedText drawAtPoint:NSMakePoint(x_offset, 0)];
+        
+        curXPos += stepSize;
+    }
+    
+}
+
 
 - (void) drawFrameWithBackgroundColor: (Color *)backgroundColor mainText: (NSString *)mainText secondaryText: (NSString *)secondaryText
 {
@@ -184,7 +239,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
     
-    [[backgroundColor colorValue] set];    
+    [[backgroundColor colorValue] set];
     [path fill];
     
     NSColor *textColor;
