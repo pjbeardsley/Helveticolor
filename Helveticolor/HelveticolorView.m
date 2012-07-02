@@ -282,6 +282,55 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
 }
 
+
+- (void) drawFrameWithBackgroundColorCG: (Color *)backgroundColor mainText: (NSString *)mainText secondaryText: (NSString *)secondaryText
+{
+    // draw the background
+    NSSize size = [self bounds].size;
+    
+    NSRect rect;
+    rect.origin.x = 0;
+    rect.origin.y = 0;
+    rect.size = NSMakeSize(size.width, size.height);
+    
+    NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
+    
+    [[backgroundColor colorValue] set];
+    [path fill];
+            
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+
+    int fontSize = (int)(size.height * 0.25);
+    CTFontDescriptorRef fd = CTFontDescriptorCreateWithNameAndSize(CFSTR("Helvetica"), fontSize);
+    CTFontRef font = CTFontCreateWithFontDescriptor(fd, fontSize, NULL);
+        
+    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+    CFAttributedStringReplaceString (attrString, CFRangeMake(0, 0), (__bridge CFStringRef) mainText);
+
+    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, [mainText length]), kCTFontAttributeName, font);
+
+    // Create a color and add it as an attribute to the string.
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGFloat components[] = { 1.0, 1.0, 1.0, 1.0 };
+    CGColorRef white = CGColorCreate(rgbColorSpace, components);
+    CGColorSpaceRelease(rgbColorSpace);
+    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, [mainText length]), kCTForegroundColorAttributeName, white);
+    
+    CTLineRef line = CTLineCreateWithAttributedString(attrString);
+
+    float flush = 0.5; // centered
+    double penOffset = CTLineGetPenOffsetForFlush(line, flush, size.width);
+
+    // Set text position and draw the line into the graphics context
+    CGContextSetTextPosition(context, penOffset, (size.height / 2.0));
+    
+    CTLineDraw(line, context);
+    CFRelease(line);
+
+}
+
+
 - (BOOL)hasConfigureSheet
 {
     return YES;
