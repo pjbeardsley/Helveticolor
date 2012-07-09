@@ -57,7 +57,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 
     NSError *error = nil;
     NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:&error] autorelease];
-   
+
     if (nil != xmlDoc){
         NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
         NSEnumerator *e = [paletteNodes objectEnumerator];
@@ -161,6 +161,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
     
+    [self drawFullPaletteFrame:palette];
+    return;
 
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
@@ -187,6 +189,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     Color *curColor = nil;
     while (curColor = [e nextObject]) {
+                
         NSRect rect;
         rect.origin.x = curXPos;
         rect.origin.y = 0;
@@ -195,17 +198,17 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
 
         [[curColor colorValue] set];
+
         [path fill];
-        
+
         NSColor *textColor;
-        if ([curColor hexValue] == @"FFFFFF") {
+        if ([[curColor hexValue] uppercaseString] == @"FFFFFF") {
             textColor = [NSColor blackColor];
         } else {
             textColor = [NSColor whiteColor];
         }
         
         
-        // draw primary text
         int font_size = (int)(rect.size.height * 0.04);
         
         NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -216,11 +219,21 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: curColor.hexValue];        
         NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
                 
-        NSSize attrSize = [mainAttributedText size];
-        int x_offset = curXPos + stepSize - (attrSize.width + 10);
+        int y_offset = (curXPos + stepSize) * -1;
 
-        [mainAttributedText drawAtPoint:NSMakePoint(x_offset, 0)];
+        // draw text
+        [NSGraphicsContext saveGraphicsState];
+
+        NSAffineTransform *rotateTransform = [NSAffineTransform transform];
+
+        CGFloat degrees = 90;
+        [rotateTransform rotateByDegrees:degrees];
+        [rotateTransform concat];
+
+        [mainAttributedText drawAtPoint:NSMakePoint(rect.size.height * 0.01, y_offset)];
         
+        [NSGraphicsContext restoreGraphicsState];
+
         curXPos += stepSize;
     }
     
@@ -243,7 +256,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     [path fill];
     
     NSColor *textColor;
-    if ([backgroundColor hexValue] == @"FFFFFF") {
+    if ([[backgroundColor hexValue] uppercaseString] == @"FFFFFF") {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
