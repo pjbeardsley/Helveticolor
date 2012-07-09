@@ -161,9 +161,6 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     Palette *palette = [self.palettes objectAtIndex: self.curPaletteIndex];
     
-    [self drawFullPaletteFrame:palette];
-    return;
-
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
         self.curColorIndex = -1;
