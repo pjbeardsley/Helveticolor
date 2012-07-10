@@ -23,9 +23,9 @@ static int const SHOW_PALETTES_TYPE_TOP    = 0;
 static int const SHOW_PALETTES_TYPE_NEW    = 1;
 static int const SHOW_PALETTES_TYPE_RANDOM = 2;
 
-static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top";
-static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new";
-static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/palettes/random";
+static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top?showPaletteWidths=1";
+static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new?showPaletteWidths=1";
+static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/palettes/random?showPaletteWidths=1";
 
 
 @synthesize curColorIndex;
@@ -179,7 +179,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 - (void) drawFullPaletteFrame: (Palette *)palette
 {
     NSSize size = [self bounds].size;
-    int stepSize = round(size.width / 5);
+    int stepSize = round(size.width / [palette.colors count]);
     int curXPos = 0;
 
     NSEnumerator *e = [palette.colors objectEnumerator];
@@ -199,7 +199,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         [path fill];
 
         NSColor *textColor;
-        if ([[curColor hexValue] uppercaseString] == @"FFFFFF") {
+        
+        if ([[curColor hexValue] caseInsensitiveCompare:@"FFFFFF"] == NSOrderedSame) {
             textColor = [NSColor blackColor];
         } else {
             textColor = [NSColor whiteColor];
@@ -253,7 +254,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     [path fill];
     
     NSColor *textColor;
-    if ([[backgroundColor hexValue] uppercaseString] == @"FFFFFF") {
+    
+    if ([[backgroundColor hexValue] caseInsensitiveCompare:@"FFFFFF"] == NSOrderedSame) {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
@@ -290,54 +292,6 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     y_offset = 5;
     [secondaryAttributedText drawAtPoint:NSMakePoint(x_offset, y_offset)];
     
-}
-
-
-- (void) drawFrameWithBackgroundColorCG: (Color *)backgroundColor mainText: (NSString *)mainText secondaryText: (NSString *)secondaryText
-{
-    // draw the background
-    NSSize size = [self bounds].size;
-    
-    NSRect rect;
-    rect.origin.x = 0;
-    rect.origin.y = 0;
-    rect.size = NSMakeSize(size.width, size.height);
-    
-    NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
-    
-    [[backgroundColor colorValue] set];
-    [path fill];
-            
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-
-    int fontSize = (int)(size.height * 0.25);
-    CTFontDescriptorRef fd = CTFontDescriptorCreateWithNameAndSize(CFSTR("Helvetica"), fontSize);
-    CTFontRef font = CTFontCreateWithFontDescriptor(fd, fontSize, NULL);
-        
-    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString (attrString, CFRangeMake(0, 0), (__bridge CFStringRef) mainText);
-
-    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, [mainText length]), kCTFontAttributeName, font);
-
-    // Create a color and add it as an attribute to the string.
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGFloat components[] = { 1.0, 1.0, 1.0, 1.0 };
-    CGColorRef white = CGColorCreate(rgbColorSpace, components);
-    CGColorSpaceRelease(rgbColorSpace);
-    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, [mainText length]), kCTForegroundColorAttributeName, white);
-    
-    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-
-    float flush = 0.5; // centered
-    double penOffset = CTLineGetPenOffsetForFlush(line, flush, size.width);
-
-    // Set text position and draw the line into the graphics context
-    CGContextSetTextPosition(context, penOffset, (size.height / 2.0));
-    
-    CTLineDraw(line, context);
-    CFRelease(line);
-
 }
 
 

@@ -11,9 +11,11 @@
 @interface Color : NSObject
 {
     NSString *hexValue;
+    NSNumber *width;
 }
 
 @property (copy) NSString *hexValue;
+@property (copy) NSNumber *width;
 
 - (id) initWithHexValue: (NSString *)newHexValue;
 - (NSColor *) colorValue;

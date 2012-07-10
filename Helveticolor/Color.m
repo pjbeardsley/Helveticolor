@@ -11,6 +11,7 @@
 @implementation Color
 
 @synthesize hexValue;
+@synthesize width;
 
 - init
 {

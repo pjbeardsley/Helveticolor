@@ -36,6 +36,13 @@
         self.userName = [[userNameNode objectAtIndex:0] objectValue];
     }
     
+    NSArray *widthsNode = [node nodesForXPath:@"colorWidths" error:&error];
+    
+    NSArray *widths = nil;
+    if ([widthsNode count] == 1) {
+        widths = [[[widthsNode objectAtIndex:0] objectValue] componentsSeparatedByString:@","];
+    }
+    
     NSArray *colorNodes = [node nodesForXPath:@"colors/hex" error:&error];
 
     NSEnumerator *e = [colorNodes objectEnumerator];
