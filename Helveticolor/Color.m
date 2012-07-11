@@ -17,17 +17,19 @@
 {
     if (self = [super init])
     {
-        hexValue = @"000000";
+        self.hexValue = @"000000";
+        self.width = [NSNumber numberWithFloat:1.0];
     }
     
     return self;
 }
 
-- (id)initWithHexValue:(NSString *)newHexValue
+- (id)initWithHexValue:(NSString *)newHexValue andWidth: (NSNumber *)newWidth
 {
     if (self = [super init])
     {
-        hexValue = newHexValue;
+        self.hexValue = newHexValue;
+        self.width = newWidth;
     }
     
     return self;
@@ -52,8 +54,8 @@
 	blueByte	= (unsigned char) (colorCode);	// masks off high bits
     
 	result = [NSColor
-              colorWithCalibratedRed: (float)redByte	/ 0xff
-              green: (float)greenByte/ 0xff
+              colorWithCalibratedRed: (float)redByte / 0xff
+              green: (float)greenByte / 0xff
               blue:	(float)blueByte	/ 0xff
               alpha: 1.0];
     

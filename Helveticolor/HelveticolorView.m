@@ -14,6 +14,7 @@
 
 static double const ANIMATION_TIME_INTERVAL = 3.0;
 static int const    PALETTE_CHANGE_INTERVAL = -60;
+static double const BRIGHTNESS_THRESHOLD    = 0.99;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
@@ -71,11 +72,11 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
         NSMutableArray *defaultColors = [NSMutableArray array];
             
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C"] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B"] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A"] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D"] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90"] autorelease]];    
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];    
     
         Palette *defaultPalette = [[[Palette alloc] initWithArray: defaultColors] autorelease];
         defaultPalette.title = @"";
@@ -135,7 +136,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 {
     
     if (self.firstTime) {
-        Color *backgroundColor = [[[Color alloc]initWithHexValue: @"000000"] autorelease];
+        Color *backgroundColor = [[[Color alloc]initWithHexValue: @"000000" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
         
         [self drawFrameWithBackgroundColor:backgroundColor mainText:@"Helveticolor" secondaryText:@""];
         
@@ -179,13 +180,14 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 - (void) drawFullPaletteFrame: (Palette *)palette
 {
     NSSize size = [self bounds].size;
-    int stepSize = round(size.width / [palette.colors count]);
     int curXPos = 0;
 
     NSEnumerator *e = [palette.colors objectEnumerator];
     
     Color *curColor = nil;
     while (curColor = [e nextObject]) {
+        
+        int stepSize = round(size.width * [curColor.width floatValue]);
                 
         NSRect rect;
         rect.origin.x = curXPos;
@@ -199,8 +201,9 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         [path fill];
 
         NSColor *textColor;
+        CGFloat brightness = [[curColor colorValue] brightnessComponent];
         
-        if ([[curColor hexValue] caseInsensitiveCompare:@"FFFFFF"] == NSOrderedSame) {
+        if (brightness > BRIGHTNESS_THRESHOLD) {
             textColor = [NSColor blackColor];
         } else {
             textColor = [NSColor whiteColor];
@@ -254,8 +257,9 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     [path fill];
     
     NSColor *textColor;
+    CGFloat brightness = [[backgroundColor colorValue] brightnessComponent];
     
-    if ([[backgroundColor hexValue] caseInsensitiveCompare:@"FFFFFF"] == NSOrderedSame) {
+    if (brightness > BRIGHTNESS_THRESHOLD) {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
@@ -265,7 +269,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     int font_size = (int)(rect.size.height * 0.25);
     
     NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
+                                        [NSFont fontWithName:@"Helvetica Neue" size:font_size], NSFontAttributeName,
                                         textColor, NSForegroundColorAttributeName,
                                         nil];
     
@@ -280,7 +284,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     // draw secondary text
     font_size = (int)(rect.size.height * 0.04);
     NSDictionary *secondaryTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
+                                             [NSFont fontWithName:@"Helvetica Neue" size:font_size], NSFontAttributeName,
                                              textColor, NSForegroundColorAttributeName,
                                              nil];
     

@@ -49,7 +49,7 @@
     NSXMLNode *curNode;
 
     while (curNode = [e nextObject]) {
-        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue]] autorelease]];
+        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue] andWidth: [widths objectAtIndex:[curNode index]]] autorelease]];
     }
     
 

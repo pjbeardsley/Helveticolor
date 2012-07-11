@@ -17,7 +17,7 @@
 @property (copy) NSString *hexValue;
 @property (copy) NSNumber *width;
 
-- (id) initWithHexValue: (NSString *)newHexValue;
+- (id) initWithHexValue: (NSString *)newHexValue andWidth: (NSNumber *)width;
 - (NSColor *) colorValue;
 
 @end
