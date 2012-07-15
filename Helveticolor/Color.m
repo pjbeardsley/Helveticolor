@@ -62,5 +62,10 @@
 	return result;
 }
 
+- (CGFloat) calculateColorBrightness
+{
+    return (([[self colorValue] redComponent] * 299) + ([[self colorValue] greenComponent] * 587) + ([[self colorValue] blueComponent] * 114)) / 1000.0;
+}
+
 
 @end

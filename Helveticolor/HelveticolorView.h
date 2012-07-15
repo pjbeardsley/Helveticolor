@@ -17,6 +17,7 @@
 @property (assign) int curColorIndex;
 @property (assign) int curPaletteIndex;
 @property (assign) bool firstTime;
+@property (assign) int curOrientation;
 @property (retain) id configSheet;
 @property (retain) id showPaletteTypePopUpButton;
 @property (retain) NSMutableArray *colors;

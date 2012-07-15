@@ -12,9 +12,9 @@
 
 @implementation HelveticolorView
 
-static double const ANIMATION_TIME_INTERVAL = 3.0;
-static int const    PALETTE_CHANGE_INTERVAL = -60;
-static double const BRIGHTNESS_THRESHOLD    = 0.99;
+static double const ANIMATION_TIME_INTERVAL    = 3.0;
+static int const    PALETTE_CHANGE_INTERVAL    = -60;
+static double const COLOR_BRIGHTNESS_THRESHOLD = 0.9;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
@@ -23,6 +23,9 @@ static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
 static int const SHOW_PALETTES_TYPE_TOP    = 0;
 static int const SHOW_PALETTES_TYPE_NEW    = 1;
 static int const SHOW_PALETTES_TYPE_RANDOM = 2;
+
+static int const VERTICAL   = 0;
+static int const HORIZONTAL = 1;
 
 static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top?showPaletteWidths=1";
 static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new?showPaletteWidths=1";
@@ -37,6 +40,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 @synthesize palettes;
 @synthesize paletteLastChanged;
 @synthesize firstTime;
+@synthesize curOrientation;
+
 
 - (void)refreshPaletteListForType:(int) showPalettesType
 {
@@ -87,6 +92,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
             
 }
 
+
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
@@ -113,6 +119,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     self.paletteLastChanged = [NSDate date];
     self.curColorIndex = -1;
     self.firstTime = YES;
+    self.curOrientation = HORIZONTAL;
     
     return self;
 }
@@ -165,34 +172,57 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
         self.curColorIndex = -1;
-        [self drawFullPaletteFrame:palette];
+        self.curOrientation = (self.curOrientation == VERTICAL) ? HORIZONTAL : VERTICAL;
+        [self drawFullPaletteFrame:palette orientation: self.curOrientation];
+        
+
+//        if (self.curOrientation == VERTICAL) {
+//            NSLog(@"changed to horiz");
+//            self.curOrientation = HORIZONTAL;
+//        } else {
+//            NSLog(@"changed to vert");
+//            self.curOrientation = VERTICAL;        
+//        }
         return;
     }
 
     Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
-
+    
     NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
     
     [self drawFrameWithBackgroundColor:color mainText:hexColorString secondaryText:[palette.title lowercaseString]];
 }
 
 
-- (void) drawFullPaletteFrame: (Palette *)palette
+- (void) drawFullPaletteFrame: (Palette *)palette orientation: (int) orientation
 {
     NSSize size = [self bounds].size;
-    int curXPos = 0;
+    int curPos = 0;
 
     NSEnumerator *e = [palette.colors objectEnumerator];
     
     Color *curColor = nil;
     while (curColor = [e nextObject]) {
         
-        int stepSize = round(size.width * [curColor.width floatValue]);
+        int stepSize = 0;
+        if (orientation == VERTICAL) {
+            stepSize = round(size.width * [curColor.width floatValue]);
+        } else {
+            stepSize = round(size.height * [curColor.width floatValue]);
+        }
+        
                 
         NSRect rect;
-        rect.origin.x = curXPos;
-        rect.origin.y = 0;
-        rect.size = NSMakeSize(stepSize, size.height);
+        
+        if (orientation == VERTICAL) {
+            rect.origin.x = curPos;
+            rect.origin.y = 0;
+            rect.size = NSMakeSize(stepSize, size.height);
+        } else {
+            rect.origin.y = curPos;
+            rect.origin.x = 0;
+            rect.size = NSMakeSize(size.width, stepSize);
+        }
 
         NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
 
@@ -201,41 +231,54 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         [path fill];
 
         NSColor *textColor;
-        CGFloat brightness = [[curColor colorValue] brightnessComponent];
         
-        if (brightness > BRIGHTNESS_THRESHOLD) {
+        if ([curColor calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
             textColor = [NSColor blackColor];
         } else {
             textColor = [NSColor whiteColor];
         }
         
-        
-        int font_size = (int)(rect.size.height * 0.04);
+        int fontSize = 0;
+        if (orientation == VERTICAL) {
+            fontSize = (int)(rect.size.height * 0.04);
+        } else {
+            fontSize = (int)(rect.size.width * 0.02);
+        }
         
         NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            [NSFont fontWithName:@"Helvetica" size:font_size], NSFontAttributeName,
+                                            [NSFont fontWithName:@"Helvetica" size:fontSize], NSFontAttributeName,
                                             textColor, NSForegroundColorAttributeName,
                                             nil];
         
         NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: curColor.hexValue];        
-        NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
-                
-        int y_offset = (curXPos + stepSize) * -1;
+        NSAttributedString *textAttr = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
+        
+        int xOffset = 0;
+        int yOffset = 0;
+        if (orientation == VERTICAL) {
+            xOffset = rect.size.height * 0.01;
+            yOffset = (curPos + stepSize) * -1;
+        } else {
+            xOffset = rect.size.width - [textAttr size].width - round(rect.size.width * 0.005);
+            yOffset = curPos;
+        }
 
         // draw text
-        [NSGraphicsContext saveGraphicsState];
+        if (orientation == VERTICAL) {
+            [NSGraphicsContext saveGraphicsState];
+            NSAffineTransform *rotateTransform = [NSAffineTransform transform];
 
-        NSAffineTransform *rotateTransform = [NSAffineTransform transform];
-
-        CGFloat degrees = 90;
-        [rotateTransform rotateByDegrees:degrees];
-        [rotateTransform concat];
-
-        [mainAttributedText drawAtPoint:NSMakePoint(rect.size.height * 0.01, y_offset)];
+            CGFloat degrees = 90;
+            [rotateTransform rotateByDegrees:degrees];
+            [rotateTransform concat];
+            [textAttr drawAtPoint:NSMakePoint(xOffset, yOffset)];
+            [NSGraphicsContext restoreGraphicsState];
+        } else {
+            [textAttr drawAtPoint:NSMakePoint(xOffset, yOffset)];
+        }
         
-        [NSGraphicsContext restoreGraphicsState];
 
-        curXPos += stepSize;
+        curPos += stepSize;
     }
     
 }
@@ -257,34 +300,33 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     [path fill];
     
     NSColor *textColor;
-    CGFloat brightness = [[backgroundColor colorValue] brightnessComponent];
-    
-    if (brightness > BRIGHTNESS_THRESHOLD) {
+        
+    if ([backgroundColor calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
     }
     
     // draw primary text
-    int font_size = (int)(rect.size.height * 0.25);
+    int fontSize = (int)(rect.size.height * 0.25);
     
     NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSFont fontWithName:@"Helvetica Neue" size:font_size], NSFontAttributeName,
+                                        [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
                                         textColor, NSForegroundColorAttributeName,
                                         nil];
     
     NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: mainText attributes: mainTextAttributes] autorelease];
     
     NSSize attrSize = [mainAttributedText size];
-    int x_offset = (rect.size.width / 2) - (attrSize.width / 2);
-    int y_offset = (rect.size.height / 2) - (attrSize.height / 2);
+    int xOffset = (rect.size.width / 2) - (attrSize.width / 2);
+    int yOffset = (rect.size.height / 2) - (attrSize.height / 2);
     
-    [mainAttributedText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    [mainAttributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
     // draw secondary text
-    font_size = (int)(rect.size.height * 0.04);
+    fontSize = (int)(rect.size.height * 0.04);
     NSDictionary *secondaryTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             [NSFont fontWithName:@"Helvetica Neue" size:font_size], NSFontAttributeName,
+                                             [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
                                              textColor, NSForegroundColorAttributeName,
                                              nil];
     
@@ -292,9 +334,9 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     attrSize = [secondaryAttributedText size];
     
     
-    x_offset = size.width - attrSize.width - 10;
-    y_offset = 5;
-    [secondaryAttributedText drawAtPoint:NSMakePoint(x_offset, y_offset)];
+    xOffset = size.width - attrSize.width - (size.width * 0.01);
+    yOffset = round(size.height * 0.01);
+    [secondaryAttributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
 }
 

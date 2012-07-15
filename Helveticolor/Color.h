@@ -19,5 +19,6 @@
 
 - (id) initWithHexValue: (NSString *)newHexValue andWidth: (NSNumber *)width;
 - (NSColor *) colorValue;
+- (CGFloat) calculateColorBrightness;
 
 @end
