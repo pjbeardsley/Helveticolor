@@ -239,17 +239,19 @@ typedef enum {
     
     // draw COLOURLovers logo
     fontSize = (int)(rect.size.height * 0.04);
-
+    
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSFont fontWithName:@"Arial" size:fontSize], NSFontAttributeName,
-                        [NSColor colorWithCalibratedRed:193 green:193 blue:193 alpha:1.0], NSForegroundColorAttributeName,
+                        [NSFont fontWithName:@"Arial Bold" size:fontSize], NSFontAttributeName,
+                        [NSColor colorWithCalibratedRed:(193.0 / 255.0) green:(193.0 / 255.0) blue:(193.0 / 255.0) alpha:1.0], NSForegroundColorAttributeName,
+                        [NSNumber numberWithFloat:-1.0], NSKernAttributeName,
                         nil];
     
     NSMutableAttributedString *colourLoversLogo = [[[NSMutableAttributedString alloc] initWithString: @"COLOUR" attributes: textAttributes] autorelease];
     
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSFont fontWithName:@"Arial Black" size:fontSize], NSFontAttributeName,
-                        [NSColor colorWithCalibratedRed:239 green:239 blue:239 alpha:1.0], NSForegroundColorAttributeName,
+                        [NSFont fontWithName:@"Arial Bold" size:fontSize], NSFontAttributeName,
+                        [NSColor colorWithCalibratedRed:(239.0 / 255.0) green:(239.0 / 255.0) blue:(239.0 / 255.0) alpha:1.0], NSForegroundColorAttributeName,
+                        [NSNumber numberWithFloat:-1.0], NSKernAttributeName,
                         nil];
                         
     NSMutableAttributedString *loversText = [[[NSMutableAttributedString alloc] initWithString: @"lovers" attributes: textAttributes] autorelease];
