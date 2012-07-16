@@ -20,17 +20,20 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 
 static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
 
-static int const SHOW_PALETTES_TYPE_TOP    = 0;
-static int const SHOW_PALETTES_TYPE_NEW    = 1;
-static int const SHOW_PALETTES_TYPE_RANDOM = 2;
-
-static int const VERTICAL   = 0;
-static int const HORIZONTAL = 1;
+typedef enum {
+    kShowPalettesTop,
+    kShowPalettesNew,
+    kShowPalettesRandom
+} ShowPalettesType;
 
 static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top?showPaletteWidths=1";
 static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new?showPaletteWidths=1";
 static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/palettes/random?showPaletteWidths=1";
 
+typedef enum {
+    kFullPaletteOrientationVertical,
+    kFullPaletteOrientationHorizontal    
+} FullPaletteOrientation;
 
 @synthesize curColorIndex;
 @synthesize curPaletteIndex;
@@ -42,7 +45,6 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 @synthesize firstTime;
 @synthesize curOrientation;
 
-
 - (void)refreshPaletteListForType:(int) showPalettesType
 {
     [self.palettes removeAllObjects];
@@ -50,10 +52,10 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     NSURL *url = nil;
     switch (showPalettesType)
     {
-        case SHOW_PALETTES_TYPE_NEW:
+        case kShowPalettesNew:
             url = [NSURL URLWithString: NEW_PALETTES_URL];
             break;
-        case SHOW_PALETTES_TYPE_RANDOM:
+        case kShowPalettesRandom:
             url = [NSURL URLWithString: RANDOM_PALETTE_URL];
             break;
         default:
@@ -103,7 +105,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
         // Register our default values
         [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSNumber numberWithInt:SHOW_PALETTES_TYPE_TOP], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
+                                    [NSNumber numberWithInt:kShowPalettesTop], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
                                     nil]];   
         
         
@@ -119,7 +121,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     self.paletteLastChanged = [NSDate date];
     self.curColorIndex = -1;
     self.firstTime = YES;
-    self.curOrientation = HORIZONTAL;
+    self.curOrientation = kFullPaletteOrientationHorizontal;
     
     return self;
 }
@@ -143,9 +145,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 {
     
     if (self.firstTime) {
-        Color *backgroundColor = [[[Color alloc]initWithHexValue: @"000000" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
-        
-        [self drawFrameWithBackgroundColor:backgroundColor mainText:@"Helveticolor" secondaryText:@""];
+            
+        [self drawSplashScreen];
         
         self.firstTime = NO;
         return;
@@ -154,8 +155,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= PALETTE_CHANGE_INTERVAL)) {
         ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
         
-        if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == SHOW_PALETTES_TYPE_RANDOM) {
-            [self refreshPaletteListForType:SHOW_PALETTES_TYPE_RANDOM];
+        if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == kShowPalettesRandom) {
+            [self refreshPaletteListForType:kShowPalettesRandom];
             self.curColorIndex = -1;
         } else {
             self.curPaletteIndex++;
@@ -172,27 +173,96 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     self.curColorIndex++;
     if (self.curColorIndex == [palette.colors count]) {
         self.curColorIndex = -1;
-        self.curOrientation = (self.curOrientation == VERTICAL) ? HORIZONTAL : VERTICAL;
+        self.curOrientation = (self.curOrientation == kFullPaletteOrientationVertical) ? kFullPaletteOrientationHorizontal : kFullPaletteOrientationVertical;
+
         [self drawFullPaletteFrame:palette orientation: self.curOrientation];
         
-
-//        if (self.curOrientation == VERTICAL) {
-//            NSLog(@"changed to horiz");
-//            self.curOrientation = HORIZONTAL;
-//        } else {
-//            NSLog(@"changed to vert");
-//            self.curOrientation = VERTICAL;        
-//        }
         return;
     }
 
     Color *color = (Color *)[palette.colors objectAtIndex: self.curColorIndex];    
-    
-    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
-    
-    [self drawFrameWithBackgroundColor:color mainText:hexColorString secondaryText:[palette.title lowercaseString]];
+        
+    [self drawFrameForColor:color withPaletteTitle:[palette.title lowercaseString]];
 }
 
+
+- (void) drawSplashScreen
+{
+
+    Color *color = [[[Color alloc]initWithHexValue: @"000000" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
+    
+    // draw the background
+    NSSize size = [self bounds].size;
+    
+    NSRect rect;
+    rect.origin.x = 0;
+    rect.origin.y = 0;
+    rect.size = NSMakeSize(size.width, size.height);
+    
+    NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
+    
+    [[color colorValue] set];
+    [path fill];
+    
+    NSColor *textColor = [NSColor whiteColor];
+    
+    // draw main title
+    int fontSize = (int)(rect.size.height * 0.25);
+    
+    NSDictionary *textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
+                                        textColor, NSForegroundColorAttributeName,
+                                        nil];
+    
+    NSAttributedString *attributedText = [[[NSAttributedString alloc] initWithString: @"Helveticolor" attributes: textAttributes] autorelease];
+    
+    NSSize attrSize = [attributedText size];
+    int xOffset = (rect.size.width / 2) - (attrSize.width / 2);
+    int yOffset = (rect.size.height / 2) - (attrSize.height / 2);
+    
+    [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
+    
+    // draw "powered by"
+    fontSize = (int)(rect.size.height * 0.03);
+
+    textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
+                        textColor, NSForegroundColorAttributeName,
+                        nil];
+    
+    attributedText = [[[NSAttributedString alloc] initWithString: @"powered by" attributes: textAttributes] autorelease];
+    attrSize = [attributedText size];
+    xOffset = (rect.size.width / 2) - (attrSize.width / 2);
+    yOffset = (rect.size.height * 0.3);
+    
+    [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
+    
+    // draw COLOURLovers logo
+    fontSize = (int)(rect.size.height * 0.04);
+
+    textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSFont fontWithName:@"Arial" size:fontSize], NSFontAttributeName,
+                        [NSColor colorWithCalibratedRed:193 green:193 blue:193 alpha:1.0], NSForegroundColorAttributeName,
+                        nil];
+    
+    NSMutableAttributedString *colourLoversLogo = [[[NSMutableAttributedString alloc] initWithString: @"COLOUR" attributes: textAttributes] autorelease];
+    
+    textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSFont fontWithName:@"Arial Black" size:fontSize], NSFontAttributeName,
+                        [NSColor colorWithCalibratedRed:239 green:239 blue:239 alpha:1.0], NSForegroundColorAttributeName,
+                        nil];
+                        
+    NSMutableAttributedString *loversText = [[[NSMutableAttributedString alloc] initWithString: @"lovers" attributes: textAttributes] autorelease];
+    
+    [colourLoversLogo appendAttributedString:loversText];
+                            
+    attrSize = [colourLoversLogo size];
+    xOffset = (rect.size.width / 2) - (attrSize.width / 2);
+    yOffset = (rect.size.height * 0.25);
+    
+    [colourLoversLogo drawAtPoint:NSMakePoint(xOffset, yOffset)];
+
+}
 
 - (void) drawFullPaletteFrame: (Palette *)palette orientation: (int) orientation
 {
@@ -205,7 +275,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     while (curColor = [e nextObject]) {
         
         int stepSize = 0;
-        if (orientation == VERTICAL) {
+        if (orientation == kFullPaletteOrientationVertical) {
             stepSize = round(size.width * [curColor.width floatValue]);
         } else {
             stepSize = round(size.height * [curColor.width floatValue]);
@@ -214,7 +284,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
                 
         NSRect rect;
         
-        if (orientation == VERTICAL) {
+        if (orientation == kFullPaletteOrientationVertical) {
             rect.origin.x = curPos;
             rect.origin.y = 0;
             rect.size = NSMakeSize(stepSize, size.height);
@@ -239,7 +309,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         }
         
         int fontSize = 0;
-        if (orientation == VERTICAL) {
+        if (orientation == kFullPaletteOrientationVertical) {
             fontSize = (int)(rect.size.height * 0.04);
         } else {
             fontSize = (int)(rect.size.width * 0.02);
@@ -255,7 +325,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         
         int xOffset = 0;
         int yOffset = 0;
-        if (orientation == VERTICAL) {
+        if (orientation == kFullPaletteOrientationVertical) {
             xOffset = rect.size.height * 0.01;
             yOffset = (curPos + stepSize) * -1;
         } else {
@@ -264,7 +334,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
         }
 
         // draw text
-        if (orientation == VERTICAL) {
+        if (orientation == kFullPaletteOrientationVertical) {
             [NSGraphicsContext saveGraphicsState];
             NSAffineTransform *rotateTransform = [NSAffineTransform transform];
 
@@ -284,7 +354,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
 }
 
 
-- (void) drawFrameWithBackgroundColor: (Color *)backgroundColor mainText: (NSString *)mainText secondaryText: (NSString *)secondaryText
+- (void) drawFrameForColor: (Color *)color withPaletteTitle: (NSString *)title
 {
     // draw the background
     NSSize size = [self bounds].size;
@@ -296,12 +366,12 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
     
     NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
     
-    [[backgroundColor colorValue] set];
+    [[color colorValue] set];
     [path fill];
     
     NSColor *textColor;
         
-    if ([backgroundColor calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
+    if ([color calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
@@ -315,7 +385,8 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
                                         textColor, NSForegroundColorAttributeName,
                                         nil];
     
-    NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: mainText attributes: mainTextAttributes] autorelease];
+    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
+    NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
     
     NSSize attrSize = [mainAttributedText size];
     int xOffset = (rect.size.width / 2) - (attrSize.width / 2);
@@ -330,7 +401,7 @@ static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/p
                                              textColor, NSForegroundColorAttributeName,
                                              nil];
     
-    NSAttributedString *secondaryAttributedText = [[[NSAttributedString alloc] initWithString: secondaryText attributes: secondaryTextAttributes] autorelease];
+    NSAttributedString *secondaryAttributedText = [[[NSAttributedString alloc] initWithString: title attributes: secondaryTextAttributes] autorelease];
     attrSize = [secondaryAttributedText size];
     
     
