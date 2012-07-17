@@ -223,7 +223,7 @@ typedef enum {
     [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
     // draw "powered by"
-    fontSize = (int)(rect.size.height * 0.03);
+    fontSize = (int)(rect.size.height * 0.0225);
 
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                         [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
@@ -233,7 +233,7 @@ typedef enum {
     attributedText = [[[NSAttributedString alloc] initWithString: @"powered by" attributes: textAttributes] autorelease];
     attrSize = [attributedText size];
     xOffset = (rect.size.width / 2) - (attrSize.width / 2);
-    yOffset = (rect.size.height * 0.3);
+    yOffset = (rect.size.height * 0.15);
     
     [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
@@ -243,15 +243,15 @@ typedef enum {
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                         [NSFont fontWithName:@"Arial Bold" size:fontSize], NSFontAttributeName,
                         [NSColor colorWithCalibratedRed:(193.0 / 255.0) green:(193.0 / 255.0) blue:(193.0 / 255.0) alpha:1.0], NSForegroundColorAttributeName,
-                        [NSNumber numberWithFloat:-1.0], NSKernAttributeName,
+                        [NSNumber numberWithFloat:(fontSize / -20.0)], NSKernAttributeName,
                         nil];
     
     NSMutableAttributedString *colourLoversLogo = [[[NSMutableAttributedString alloc] initWithString: @"COLOUR" attributes: textAttributes] autorelease];
     
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSFont fontWithName:@"Arial Bold" size:fontSize], NSFontAttributeName,
+                        [NSFont fontWithName:@"Arial" size:fontSize], NSFontAttributeName,
                         [NSColor colorWithCalibratedRed:(239.0 / 255.0) green:(239.0 / 255.0) blue:(239.0 / 255.0) alpha:1.0], NSForegroundColorAttributeName,
-                        [NSNumber numberWithFloat:-1.0], NSKernAttributeName,
+                        [NSNumber numberWithFloat:(fontSize / -28.0)], NSKernAttributeName,
                         nil];
                         
     NSMutableAttributedString *loversText = [[[NSMutableAttributedString alloc] initWithString: @"lovers" attributes: textAttributes] autorelease];
@@ -260,7 +260,7 @@ typedef enum {
                             
     attrSize = [colourLoversLogo size];
     xOffset = (rect.size.width / 2) - (attrSize.width / 2);
-    yOffset = (rect.size.height * 0.25);
+    yOffset = (rect.size.height * 0.10);
     
     [colourLoversLogo drawAtPoint:NSMakePoint(xOffset, yOffset)];
 
