@@ -12,6 +12,7 @@
     int curColorIndex;
     IBOutlet id configSheet;
     IBOutlet id showPaletteTypePopUpButton;
+    IBOutlet id colourLoversLink;
 }
 
 @property (assign) int curColorIndex;
@@ -19,6 +20,7 @@
 @property (assign) bool firstTime;
 @property (assign) int curOrientation;
 @property (retain) id configSheet;
+@property (retain) id colourLoversLink;
 @property (retain) id showPaletteTypePopUpButton;
 @property (retain) NSMutableArray *colors;
 @property (retain) NSMutableArray *palettes;

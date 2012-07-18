@@ -9,6 +9,7 @@
 #import "HelveticolorView.h"
 #import "Color.h"
 #import "Palette.h"
+#import "NSAttributedString+Hyperlink.h"
 
 @implementation HelveticolorView
 
@@ -38,6 +39,7 @@ typedef enum {
 @synthesize curColorIndex;
 @synthesize curPaletteIndex;
 @synthesize configSheet;
+@synthesize colourLoversLink;
 @synthesize showPaletteTypePopUpButton;
 @synthesize colors;
 @synthesize palettes;
@@ -438,6 +440,23 @@ typedef enum {
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
     [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
     
+
+    // both are needed, otherwise hyperlink won't accept mousedown
+    NSLog(@"%@", self.colourLoversLink);
+    [self.colourLoversLink setDrawsBackground:NO];
+    [self.colourLoversLink setAllowsEditingTextAttributes: YES];
+    [self.colourLoversLink setSelectable: YES];
+    
+    NSURL* url = [NSURL URLWithString:@"http://www.colourlovers.com"];
+    
+    NSMutableAttributedString* string = [[NSMutableAttributedString alloc] init];
+    [string appendAttributedString: [NSAttributedString hyperlinkFromString:@"COLOURLovers" withURL:url]];
+    
+    // set the attributed string to the NSTextField
+    [self.colourLoversLink setAttributedStringValue: string];
+    
+    [string release];
+        
 	return self.configSheet;
 }
 
