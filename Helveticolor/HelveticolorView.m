@@ -21,6 +21,7 @@ static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
 static NSString * const USER_AGENT  = @"Helveticolor(+http://pjbeardsley.github.com/Helveticolor)";
 
 static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
+static NSString * const PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY = @"PaletteChangeInterval";
 
 typedef enum {
     kShowPalettesTop,
@@ -41,10 +42,11 @@ typedef enum {
 @synthesize curPaletteIndex;
 @synthesize configSheet;
 @synthesize colourLoversLink;
+@synthesize paletteChangeIntervalSlider;
 @synthesize showPaletteTypePopUpButton;
 @synthesize colors;
 @synthesize palettes;
-@synthesize changeFrequency;
+@synthesize paletteChangeInterval;
 @synthesize paletteLastChanged;
 @synthesize firstTime;
 @synthesize curOrientation;
@@ -122,7 +124,6 @@ typedef enum {
                                     [NSNumber numberWithInt:kShowPalettesTop], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
                                     nil]];   
         
-        
         self.colors = [NSMutableArray array];
         self.palettes = [NSMutableArray array];
 
@@ -158,6 +159,8 @@ typedef enum {
 - (void)animateOneFrame
 {
     
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+
     if (self.firstTime) {
             
         [self drawSplashScreen];
@@ -166,8 +169,7 @@ typedef enum {
         return;
     }
     
-    if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= PALETTE_CHANGE_INTERVAL)) {
-        ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+    if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= ([[defaults objectForKey: PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue] * -60))) {
         
         if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == kShowPalettesRandom) {
             [self refreshPaletteListForType:kShowPalettesRandom];
@@ -443,17 +445,17 @@ typedef enum {
 			NSLog( @"Failed to load configure sheet." );
 		}
 	}
+    
+    [self.paletteChangeIntervalSlider setAllowsTickMarkValuesOnly:YES];
 
+    // palette type pulldown config
     [self.showPaletteTypePopUpButton removeAllItems];
     [self.showPaletteTypePopUpButton addItemWithTitle: @"Top Palettes"];
     [self.showPaletteTypePopUpButton addItemWithTitle: @"Newest Palettes"];
     [self.showPaletteTypePopUpButton addItemWithTitle: @"Random Palettes"];
     
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
-    [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
     
-
-    // both are needed, otherwise hyperlink won't accept mousedown
+    // COLOURLovers link config
     [self.colourLoversLink setDrawsBackground:NO];
     [self.colourLoversLink setAllowsEditingTextAttributes: YES];
     [self.colourLoversLink setSelectable: YES];
@@ -467,7 +469,13 @@ typedef enum {
     [self.colourLoversLink setAttributedStringValue: string];
     
     [string release];
-        
+
+    // get and set defaults
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+    [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
+    [self.paletteChangeIntervalSlider setIntValue:[[defaults objectForKey:PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue]];
+    
+    
 	return self.configSheet;
 }
 
@@ -479,6 +487,8 @@ typedef enum {
     
     // Update our defaults
     [defaults setObject:[NSNumber numberWithInt:[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY];
+    
+    [defaults setObject:[NSNumber numberWithInt:[self.paletteChangeIntervalSlider intValue]] forKey:PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY];
     
     // Save the settings to disk
     [defaults synchronize];

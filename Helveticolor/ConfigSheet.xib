@@ -459,6 +459,14 @@
 					</object>
 					<int key="connectionID">1310</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">paletteChangeIntervalSlider</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="286039368"/>
+					</object>
+					<int key="connectionID">1311</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -1579,7 +1587,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1310</int>
+			<int key="maxID">1311</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1587,22 +1595,22 @@
 					<string key="className">HelveticolorView</string>
 					<string key="superclassName">ScreenSaverView</string>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="changeFrequencySlider">id</string>
 						<string key="colourLoversLink">id</string>
 						<string key="configSheet">id</string>
+						<string key="paletteChangeIntervalSlider">id</string>
 						<string key="showPaletteTypePopUpButton">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="changeFrequencySlider">
-							<string key="name">changeFrequencySlider</string>
-							<string key="candidateClassName">id</string>
-						</object>
 						<object class="IBToOneOutletInfo" key="colourLoversLink">
 							<string key="name">colourLoversLink</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="configSheet">
 							<string key="name">configSheet</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="paletteChangeIntervalSlider">
+							<string key="name">paletteChangeIntervalSlider</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="showPaletteTypePopUpButton">

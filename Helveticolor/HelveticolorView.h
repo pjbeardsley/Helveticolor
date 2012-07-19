@@ -13,7 +13,7 @@
     IBOutlet id configSheet;
     IBOutlet id showPaletteTypePopUpButton;
     IBOutlet id colourLoversLink;
-    IBOutlet id changeFrequencySlider;
+    IBOutlet id paletteChangeIntervalSlider;
 }
 
 @property (assign) int curColorIndex;
@@ -22,10 +22,11 @@
 @property (assign) int curOrientation;
 @property (retain) id configSheet;
 @property (retain) id colourLoversLink;
+@property (retain) id paletteChangeIntervalSlider;
 @property (retain) id showPaletteTypePopUpButton;
 @property (retain) NSMutableArray *colors;
 @property (retain) NSMutableArray *palettes;
-@property (assign) int changeFrequency;
+@property (assign) int paletteChangeInterval;
 @property (retain) NSDate *paletteLastChanged;
 
 - (void)refreshPaletteListForType:(int) showPalettesType;
