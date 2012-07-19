@@ -18,6 +18,7 @@ static int const    PALETTE_CHANGE_INTERVAL    = -60;
 static double const COLOR_BRIGHTNESS_THRESHOLD = 0.9;
 
 static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
+static NSString * const USER_AGENT  = @"Helveticolor(+http://pjbeardsley.github.com/Helveticolor)";
 
 static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
 
@@ -43,6 +44,7 @@ typedef enum {
 @synthesize showPaletteTypePopUpButton;
 @synthesize colors;
 @synthesize palettes;
+@synthesize changeFrequency;
 @synthesize paletteLastChanged;
 @synthesize firstTime;
 @synthesize curOrientation;
@@ -65,8 +67,18 @@ typedef enum {
             
     }
 
+        
+    NSMutableURLRequest* request = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
+    [request setValue:USER_AGENT forHTTPHeaderField:@"User-Agent"];
+
+    NSURLResponse* response = nil;
     NSError *error = nil;
-    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:&error] autorelease];
+
+    NSData* data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response
+                                                     error:&error];    
+    
+    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:data options:0 error:&error] autorelease];
 
     if (nil != xmlDoc){
         NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
@@ -442,7 +454,6 @@ typedef enum {
     
 
     // both are needed, otherwise hyperlink won't accept mousedown
-    NSLog(@"%@", self.colourLoversLink);
     [self.colourLoversLink setDrawsBackground:NO];
     [self.colourLoversLink setAllowsEditingTextAttributes: YES];
     [self.colourLoversLink setSelectable: YES];
