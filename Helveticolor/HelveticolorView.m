@@ -90,7 +90,6 @@ typedef enum {
             [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
         }
                 
-        
     } else {
         
         NSMutableArray *defaultColors = [NSMutableArray array];
@@ -523,6 +522,16 @@ typedef enum {
 {
     [[NSApplication sharedApplication] endSheet:self.configSheet];
     
+}
+
+- (void) writePalettesToCache
+{
+    NSMutableDictionary * cache = [[[NSMutableDictionary alloc] init] autorelease];
+    
+    [cache setObject:self.palettes forKey:@"Palettes"];
+    
+    [cache writeToFile:[@"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist"
+                        stringByExpandingTildeInPath] atomically: TRUE];
 }
 
 
