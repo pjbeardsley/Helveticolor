@@ -62,6 +62,7 @@
 							<string key="NSFrame">{{217, 12}, {81, 32}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="100062243">
@@ -334,7 +335,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="498166074">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
-								<string key="NSContents">10 min</string>
+								<string key="NSContents">7 min</string>
 								<reference key="NSSupport" ref="26"/>
 								<string key="NSCellIdentifier">_NS:1505</string>
 								<reference key="NSControlView" ref="1029377599"/>
@@ -354,7 +355,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="154740310">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
-								<string key="NSContents">20 min</string>
+								<string key="NSContents">9 min</string>
 								<reference key="NSSupport" ref="26"/>
 								<string key="NSCellIdentifier">_NS:1505</string>
 								<reference key="NSControlView" ref="720202110"/>
@@ -377,7 +378,7 @@
 								<string key="NSContents"/>
 								<string key="NSCellIdentifier">_NS:9</string>
 								<reference key="NSControlView" ref="286039368"/>
-								<double key="NSMaxValue">10</double>
+								<double key="NSMaxValue">9</double>
 								<double key="NSMinValue">3</double>
 								<double key="NSValue">3</double>
 								<double key="NSAltIncValue">0.0</double>

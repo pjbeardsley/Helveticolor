@@ -77,8 +77,8 @@ typedef enum {
     NSError *error = nil;
 
     NSData* data = [NSURLConnection sendSynchronousRequest:request
-                                         returningResponse:&response
-                                                     error:&error];    
+                                    returningResponse:&response
+                                    error:&error];    
     
     NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:data options:0 error:&error] autorelease];
 
@@ -122,6 +122,7 @@ typedef enum {
         // Register our default values
         [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSNumber numberWithInt:kShowPalettesTop], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
+                                    [NSNumber numberWithInt:3], PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY,
                                     nil]];   
         
         self.colors = [NSMutableArray array];
@@ -169,7 +170,17 @@ typedef enum {
         return;
     }
     
-    if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= ([[defaults objectForKey: PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue] * -60))) {
+    int palleteChangeInterval = [[defaults objectForKey: PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue];
+    
+    if (paletteChangeInterval < 3) {
+        paletteChangeInterval = 3;
+    }
+
+    if (paletteChangeInterval > 9) {
+        paletteChangeInterval = 9;
+    }
+    
+    if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= (palleteChangeInterval * -60))) {
         
         if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == kShowPalettesRandom) {
             [self refreshPaletteListForType:kShowPalettesRandom];
@@ -396,15 +407,24 @@ typedef enum {
     }
     
     // draw primary text
-    int fontSize = (int)(rect.size.height * 0.25);
+    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
+
+    int alphaFontSize = (int)(rect.size.height * 0.25);
+    int numericFontSize = (int)(rect.size.height * 0.255);
     
     NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
+                                        [NSFont fontWithName:@"Helvetica Neue" size:numericFontSize], NSFontAttributeName,
                                         textColor, NSForegroundColorAttributeName,
                                         nil];
     
-    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
-    NSAttributedString *mainAttributedText = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
+    NSMutableAttributedString *mainAttributedText = [[[NSMutableAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
+    
+    for (int i = 0; i < [hexColorString length]; i++) {
+        if (([hexColorString characterAtIndex:i] >= 'A') || ([hexColorString characterAtIndex:i] >= 'F')) {
+            [mainAttributedText addAttribute:NSFontAttributeName value:[NSFont fontWithName:@"Helvetica Neue" size:alphaFontSize] range:NSMakeRange(i, 1)];
+        }
+    }
+    
     
     NSSize attrSize = [mainAttributedText size];
     int xOffset = (rect.size.width / 2) - (attrSize.width / 2);
@@ -413,7 +433,7 @@ typedef enum {
     [mainAttributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
     // draw secondary text
-    fontSize = (int)(rect.size.height * 0.04);
+    int fontSize = (int)(rect.size.height * 0.04);
     NSDictionary *secondaryTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                              [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
                                              textColor, NSForegroundColorAttributeName,
