@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Palette : NSObject
+@interface Palette : NSObject <NSCoding>
 {
     NSString *title;
     NSString *userName;

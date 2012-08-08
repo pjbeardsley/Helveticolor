@@ -159,7 +159,7 @@
 		D063F166152B5F6400C41757 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = D063F169152B5F6400C41757 /* Build configuration list for PBXProject "Helveticolor" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -277,6 +277,7 @@
 		D063F189152B5F6400C41757 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Helveticolor/Helveticolor-Prefix.pch";
 				INFOPLIST_FILE = "Helveticolor/Helveticolor-Info.plist";
@@ -289,6 +290,7 @@
 		D063F18A152B5F6400C41757 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Helveticolor/Helveticolor-Prefix.pch";
 				INFOPLIST_FILE = "Helveticolor/Helveticolor-Info.plist";

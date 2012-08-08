@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Color : NSObject
+@interface Color : NSObject <NSCoding>
 {
     NSString *hexValue;
     NSNumber *width;

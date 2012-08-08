@@ -68,8 +68,7 @@ typedef enum {
             url = [NSURL URLWithString: TOP_PALETTES_URL];
             
     }
-
-        
+            
     NSMutableURLRequest* request = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
     [request setValue:USER_AGENT forHTTPHeaderField:@"User-Agent"];
 
@@ -89,7 +88,7 @@ typedef enum {
         while (curNode = [e nextObject]) {
             [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
         }
-                
+                        
     } else {
         
         NSMutableArray *defaultColors = [NSMutableArray array];
@@ -348,7 +347,7 @@ typedef enum {
                                             textColor, NSForegroundColorAttributeName,
                                             nil];
         
-        NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: curColor.hexValue];        
+        NSString *hexColorString = [@"#" stringByAppendingString: curColor.hexValue];
         NSAttributedString *textAttr = [[[NSAttributedString alloc] initWithString: hexColorString attributes: mainTextAttributes] autorelease];
         
         int xOffset = 0;
@@ -406,7 +405,7 @@ typedef enum {
     }
     
     // draw primary text
-    NSString *hexColorString = [[NSString stringWithString: @"#"] stringByAppendingString: color.hexValue];
+    NSString *hexColorString = [@"#" stringByAppendingString: color.hexValue];
 
     int alphaFontSize = (int)(rect.size.height * 0.25);
     int numericFontSize = (int)(rect.size.height * 0.255);
@@ -505,7 +504,7 @@ typedef enum {
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
     
     // Update our defaults
-    [defaults setObject:[NSNumber numberWithInt:[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY];
+    [defaults setObject:[NSNumber numberWithInt:(int)[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY];
     
     [defaults setObject:[NSNumber numberWithInt:[self.paletteChangeIntervalSlider intValue]] forKey:PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY];
     
@@ -526,12 +525,23 @@ typedef enum {
 
 - (void) writePalettesToCache
 {
-    NSMutableDictionary * cache = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] init] autorelease];
     
-    [cache setObject:self.palettes forKey:@"Palettes"];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.palettes];
+    [cache setObject:data forKey:@"Palettes"];
     
     [cache writeToFile:[@"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist"
                         stringByExpandingTildeInPath] atomically: TRUE];
+    
+}
+
+- (void) readPalettesFromCache
+{
+    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] init] autorelease];
+    [cache initWithContentsOfFile:[@"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist"
+                                   stringByExpandingTildeInPath]];
+    NSData *data = [cache objectForKey:@"Palettes"];
+    self.palettes = [NSKeyedUnarchiver unarchiveObjectWithData:data];
 }
 
 

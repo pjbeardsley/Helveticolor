@@ -68,4 +68,19 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super init]) {
+        self.title = [decoder decodeObjectForKey:@"Title"];
+        self.userName = [decoder decodeObjectForKey:@"Username"];
+        self.colors = [decoder decodeObjectForKey:@"Colors"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    [encoder encodeObject:self.title forKey:@"Title"];
+    [encoder encodeObject:self.userName forKey:@"Username"];
+    [encoder encodeObject:self.colors forKey:@"Colors"];
+}
+
 @end

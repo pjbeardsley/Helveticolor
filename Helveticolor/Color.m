@@ -67,5 +67,18 @@
     return (([[self colorValue] redComponent] * 299) + ([[self colorValue] greenComponent] * 587) + ([[self colorValue] blueComponent] * 114)) / 1000.0;
 }
 
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super init]) {
+        self.hexValue = [decoder decodeObjectForKey:@"HexValue"];
+        self.width = [decoder decodeObjectForKey:@"Width"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    [encoder encodeObject:self.hexValue forKey:@"HexValue"];
+    [encoder encodeObject:self.width forKey:@"Width"];
+}
+
 
 @end
