@@ -10,6 +10,9 @@
 
 @implementation Color
 
+static NSString * const kHexValueNSCodingKey = @"HexValue";
+static NSString * const kWidthNSCodingKey    = @"Width";
+
 @synthesize hexValue;
 @synthesize width;
 
@@ -43,7 +46,7 @@
 	unsigned int colorCode = 0;
 	unsigned char redByte, greenByte, blueByte;
 	
-	if (nil != self.hexValue)
+	if (self.hexValue != nil)
 	{
 		NSScanner *scanner = [NSScanner scannerWithString:self.hexValue];
 		(void) [scanner scanHexInt:&colorCode];	// ignore error
@@ -69,15 +72,15 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if (self = [super init]) {
-        self.hexValue = [decoder decodeObjectForKey:@"HexValue"];
-        self.width = [decoder decodeObjectForKey:@"Width"];
+        self.hexValue = [decoder decodeObjectForKey:kHexValueNSCodingKey];
+        self.width = [decoder decodeObjectForKey:kWidthNSCodingKey];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
-    [encoder encodeObject:self.hexValue forKey:@"HexValue"];
-    [encoder encodeObject:self.width forKey:@"Width"];
+    [encoder encodeObject:self.hexValue forKey:kHexValueNSCodingKey];
+    [encoder encodeObject:self.width forKey:kWidthNSCodingKey];
 }
 
 

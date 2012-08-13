@@ -13,25 +13,27 @@
 
 @implementation HelveticolorView
 
-static double const ANIMATION_TIME_INTERVAL    = 3.0;
-static int const    PALETTE_CHANGE_INTERVAL    = -60;
-static double const COLOR_BRIGHTNESS_THRESHOLD = 0.9;
+static NSString * const kModuleName = @"com.pjbeardsley.Helveticolor";
 
-static NSString * const MODULE_NAME = @"com.pjbeardsley.Helveticolor";
-static NSString * const USER_AGENT  = @"Helveticolor(+http://pjbeardsley.github.com/Helveticolor)";
+static NSString * const kUserAgent        = @"Helveticolor(+http://pjbeardsley.github.com/Helveticolor)";
+static NSString * const kTopPalettesUrl   = @"http://www.colourlovers.com/api/palettes/top?showPaletteWidths=1";
+static NSString * const kNewPalettesUrl   = @"http://www.colourlovers.com/api/palettes/new?showPaletteWidths=1";
+static NSString * const kRandomPaletteUrl = @"http://www.colourlovers.com/api/palettes/random?showPaletteWidths=1";
 
-static NSString * const SHOW_PALETTES_TYPE_DEFAULTS_KEY = @"ShowPalettesType";
-static NSString * const PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY = @"PaletteChangeInterval";
+static NSString * const kShowPalettesTypeDefaultsKey      = @"ShowPalettesType";
+static NSString * const kPaletteChangeIntervalDefaultsKey = @"PaletteChangeInterval";
+
+static NSString * const kCacheFilePath = @"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist";
+
+static double const kAnimationTimeInterval    = 3.0;
+static double const kColorBrightnessThreshold = 0.9;
+
 
 typedef enum {
     kShowPalettesTop,
     kShowPalettesNew,
     kShowPalettesRandom
 } ShowPalettesType;
-
-static NSString * const TOP_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/top?showPaletteWidths=1";
-static NSString * const NEW_PALETTES_URL   = @"http://www.colourlovers.com/api/palettes/new?showPaletteWidths=1";
-static NSString * const RANDOM_PALETTE_URL = @"http://www.colourlovers.com/api/palettes/random?showPaletteWidths=1";
 
 typedef enum {
     kFullPaletteOrientationVertical,
@@ -54,23 +56,23 @@ typedef enum {
 - (void)refreshPaletteListForType:(int) showPalettesType
 {
     [self.palettes removeAllObjects];
-    
+        
     NSURL *url = nil;
     switch (showPalettesType)
     {
         case kShowPalettesNew:
-            url = [NSURL URLWithString: NEW_PALETTES_URL];
+            url = [NSURL URLWithString: kNewPalettesUrl];
             break;
         case kShowPalettesRandom:
-            url = [NSURL URLWithString: RANDOM_PALETTE_URL];
+            url = [NSURL URLWithString: kRandomPaletteUrl];
             break;
         default:
-            url = [NSURL URLWithString: TOP_PALETTES_URL];
+            url = [NSURL URLWithString: kTopPalettesUrl];
             
     }
             
     NSMutableURLRequest* request = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
-    [request setValue:USER_AGENT forHTTPHeaderField:@"User-Agent"];
+    [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
 
     NSURLResponse* response = nil;
     NSError *error = nil;
@@ -79,33 +81,26 @@ typedef enum {
                                     returningResponse:&response
                                     error:&error];    
     
+    if (data == nil) {
+        [self readPalettesFromCache];
+        return;
+    }
+    
     NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:data options:0 error:&error] autorelease];
 
-    if (nil != xmlDoc){
-        NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
-        NSEnumerator *e = [paletteNodes objectEnumerator];
-        NSXMLNode *curNode = nil;
-        while (curNode = [e nextObject]) {
-            [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
-        }
-                        
-    } else {
-        
-        NSMutableArray *defaultColors = [NSMutableArray array];
-            
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];    
-    
-        Palette *defaultPalette = [[[Palette alloc] initWithArray: defaultColors] autorelease];
-        defaultPalette.title = @"";
-        defaultPalette.userName = @"";
-        
-        [self.palettes addObject: defaultPalette];
+    if (xmlDoc == nil){
+        [self readPalettesFromCache];
+        return;
     }
-            
+    
+    NSArray *paletteNodes = [xmlDoc nodesForXPath:@"palettes/palette" error:&error];
+    NSEnumerator *e = [paletteNodes objectEnumerator];
+    NSXMLNode *curNode = nil;
+    while (curNode = [e nextObject]) {
+        [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
+    }
+    
+    [self writePalettesToCache];
 }
 
 
@@ -113,22 +108,22 @@ typedef enum {
 {
     self = [super initWithFrame:frame isPreview:isPreview];
     
-    if (self) {
+    if (self != nil) {
                 
-        ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+        ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:kModuleName];
         
         // Register our default values
         [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSNumber numberWithInt:kShowPalettesTop], SHOW_PALETTES_TYPE_DEFAULTS_KEY,
-                                    [NSNumber numberWithInt:3], PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY,
+                                    [NSNumber numberWithInt:kShowPalettesTop], kShowPalettesTypeDefaultsKey,
+                                    [NSNumber numberWithInt:3], kPaletteChangeIntervalDefaultsKey,
                                     nil]];   
         
         self.colors = [NSMutableArray array];
         self.palettes = [NSMutableArray array];
 
-        [self refreshPaletteListForType:[[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
+        [self refreshPaletteListForType:[[defaults objectForKey:kShowPalettesTypeDefaultsKey] intValue]];
 
-        [self setAnimationTimeInterval: ANIMATION_TIME_INTERVAL];
+        [self setAnimationTimeInterval:kAnimationTimeInterval];
     }
     
     self.curPaletteIndex = 0;
@@ -158,7 +153,7 @@ typedef enum {
 - (void)animateOneFrame
 {
     
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:kModuleName];
 
     if (self.firstTime) {
             
@@ -168,7 +163,7 @@ typedef enum {
         return;
     }
     
-    int palleteChangeInterval = [[defaults objectForKey: PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue];
+    int palleteChangeInterval = [[defaults objectForKey: kPaletteChangeIntervalDefaultsKey] intValue];
     
     if (paletteChangeInterval < 3) {
         paletteChangeInterval = 3;
@@ -180,7 +175,7 @@ typedef enum {
     
     if ((self.paletteLastChanged != nil) && ([self.paletteLastChanged timeIntervalSinceNow] <= (palleteChangeInterval * -60))) {
         
-        if ([[defaults objectForKey: SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue] == kShowPalettesRandom) {
+        if ([[defaults objectForKey: kShowPalettesTypeDefaultsKey] intValue] == kShowPalettesRandom) {
             [self refreshPaletteListForType:kShowPalettesRandom];
             self.curColorIndex = -1;
         } else {
@@ -329,7 +324,7 @@ typedef enum {
 
         NSColor *textColor;
         
-        if ([curColor calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
+        if ([curColor calculateColorBrightness] > kColorBrightnessThreshold) {
             textColor = [NSColor blackColor];
         } else {
             textColor = [NSColor whiteColor];
@@ -343,7 +338,7 @@ typedef enum {
         }
         
         NSDictionary *mainTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            [NSFont fontWithName:@"Helvetica" size:fontSize], NSFontAttributeName,
+                                            [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
                                             textColor, NSForegroundColorAttributeName,
                                             nil];
         
@@ -398,7 +393,7 @@ typedef enum {
     
     NSColor *textColor;
         
-    if ([color calculateColorBrightness] > COLOR_BRIGHTNESS_THRESHOLD) {
+    if ([color calculateColorBrightness] > kColorBrightnessThreshold) {
         textColor = [NSColor blackColor];
     } else {
         textColor = [NSColor whiteColor];
@@ -489,9 +484,9 @@ typedef enum {
     [string release];
 
     // get and set defaults
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:MODULE_NAME];
-    [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY] intValue]];
-    [self.paletteChangeIntervalSlider setIntValue:[[defaults objectForKey:PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY] intValue]];
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:kModuleName];
+    [self.showPaletteTypePopUpButton selectItemAtIndex:[[defaults objectForKey:kShowPalettesTypeDefaultsKey] intValue]];
+    [self.paletteChangeIntervalSlider setIntValue:[[defaults objectForKey:kPaletteChangeIntervalDefaultsKey] intValue]];
     
     
 	return self.configSheet;
@@ -501,12 +496,12 @@ typedef enum {
 - (IBAction)okClick:(id)sender
 {
     
-    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName: MODULE_NAME];
+    ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:kModuleName];
     
     // Update our defaults
-    [defaults setObject:[NSNumber numberWithInt:(int)[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:SHOW_PALETTES_TYPE_DEFAULTS_KEY];
+    [defaults setObject:[NSNumber numberWithInt:(int)[self.showPaletteTypePopUpButton indexOfSelectedItem]] forKey:kShowPalettesTypeDefaultsKey];
     
-    [defaults setObject:[NSNumber numberWithInt:[self.paletteChangeIntervalSlider intValue]] forKey:PALETTE_CHANGE_INTERVAL_DEFAULTS_KEY];
+    [defaults setObject:[NSNumber numberWithInt:[self.paletteChangeIntervalSlider intValue]] forKey:kPaletteChangeIntervalDefaultsKey];
     
     // Save the settings to disk
     [defaults synchronize];
@@ -530,18 +525,32 @@ typedef enum {
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.palettes];
     [cache setObject:data forKey:@"Palettes"];
     
-    [cache writeToFile:[@"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist"
-                        stringByExpandingTildeInPath] atomically: TRUE];
-    
+    [cache writeToFile:[kCacheFilePath stringByExpandingTildeInPath] atomically: TRUE];
 }
 
 - (void) readPalettesFromCache
 {
-    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] init] autorelease];
-    [cache initWithContentsOfFile:[@"~/Library/Preferences/com.pjbeardsley.Helveticolor.plist"
-                                   stringByExpandingTildeInPath]];
+    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] initWithContentsOfFile:[kCacheFilePath stringByExpandingTildeInPath]] autorelease];
     NSData *data = [cache objectForKey:@"Palettes"];
-    self.palettes = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    
+    if (data != nil) {
+        self.palettes = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    } else {
+        // no palette cache found-- manually add a fallback palette.
+        NSMutableArray *defaultColors = [NSMutableArray array];
+        
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90" andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        
+        Palette *defaultPalette = [[[Palette alloc] initWithArray: defaultColors] autorelease];
+        defaultPalette.title = @"";
+        defaultPalette.userName = @"";
+        [self.palettes addObject: defaultPalette];
+        
+    }
 }
 
 

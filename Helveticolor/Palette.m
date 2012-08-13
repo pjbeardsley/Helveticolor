@@ -11,6 +11,11 @@
 
 @implementation Palette
 
+static NSString * const kTitleNSCodingKey    = @"Title";
+static NSString * const kUsernameNSCodingKey = @"Username";
+static NSString * const kColorsNSCodingKey   = @"Colors";
+
+
 @synthesize title;
 @synthesize userName;
 @synthesize colors;
@@ -70,17 +75,17 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if (self = [super init]) {
-        self.title = [decoder decodeObjectForKey:@"Title"];
-        self.userName = [decoder decodeObjectForKey:@"Username"];
-        self.colors = [decoder decodeObjectForKey:@"Colors"];
+        self.title    = [decoder decodeObjectForKey:kTitleNSCodingKey];
+        self.userName = [decoder decodeObjectForKey:kUsernameNSCodingKey];
+        self.colors   = [decoder decodeObjectForKey:kColorsNSCodingKey];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
-    [encoder encodeObject:self.title forKey:@"Title"];
-    [encoder encodeObject:self.userName forKey:@"Username"];
-    [encoder encodeObject:self.colors forKey:@"Colors"];
+    [encoder encodeObject:self.title forKey:kTitleNSCodingKey];
+    [encoder encodeObject:self.userName forKey:kUsernameNSCodingKey];
+    [encoder encodeObject:self.colors forKey:kColorsNSCodingKey];
 }
 
 @end
