@@ -15,11 +15,9 @@ static NSString * const kTitleNSCodingKey    = @"Title";
 static NSString * const kUsernameNSCodingKey = @"Username";
 static NSString * const kColorsNSCodingKey   = @"Colors";
 
-
 @synthesize title;
 @synthesize userName;
 @synthesize colors;
-
 
 - (id) initWithXMLNode: (NSXMLNode *)node
 {
@@ -54,7 +52,8 @@ static NSString * const kColorsNSCodingKey   = @"Colors";
     NSXMLNode *curNode;
 
     while (curNode = [e nextObject]) {
-        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue] andWidth: [widths objectAtIndex:[curNode index]]] autorelease]];
+        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue]
+            andWidth: [widths objectAtIndex:[curNode index]]] autorelease]];
     }
     
 
@@ -64,6 +63,7 @@ static NSString * const kColorsNSCodingKey   = @"Colors";
 
 - (id) initWithArray:(NSMutableArray *)array
 {
+
     if (self = [super init]) {
         self.colors = [NSMutableArray arrayWithCapacity:5];
     }
@@ -73,12 +73,15 @@ static NSString * const kColorsNSCodingKey   = @"Colors";
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder {
+- (id)initWithCoder:(NSCoder *)decoder
+{
+
     if (self = [super init]) {
         self.title    = [decoder decodeObjectForKey:kTitleNSCodingKey];
         self.userName = [decoder decodeObjectForKey:kUsernameNSCodingKey];
         self.colors   = [decoder decodeObjectForKey:kColorsNSCodingKey];
     }
+    
     return self;
 }
 

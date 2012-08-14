@@ -42,39 +42,44 @@ static NSString * const kWidthNSCodingKey    = @"Width";
 
 - (NSColor *) colorValue
 {
-	NSColor *result = nil;
-	unsigned int colorCode = 0;
-	unsigned char redByte, greenByte, blueByte;
+	NSColor *result         = nil;
+	unsigned int colorCode  = 0;
+	unsigned char redByte   = 0;
+    unsigned char greenByte = 0;
+    unsigned char blueByte  = 0;
 	
-	if (self.hexValue != nil)
+	if (self.hexValue)
 	{
 		NSScanner *scanner = [NSScanner scannerWithString:self.hexValue];
 		(void) [scanner scanHexInt:&colorCode];	// ignore error
 	}
     
-	redByte		= (unsigned char) (colorCode >> 16);
-	greenByte	= (unsigned char) (colorCode >> 8);
-	blueByte	= (unsigned char) (colorCode);	// masks off high bits
+	redByte	  = (unsigned char) (colorCode >> 16);
+	greenByte = (unsigned char) (colorCode >> 8);
+	blueByte  = (unsigned char) (colorCode);	// masks off high bits
     
-	result = [NSColor
-              colorWithCalibratedRed: (float)redByte / 0xff
-              green: (float)greenByte / 0xff
-              blue:	(float)blueByte	/ 0xff
-              alpha: 1.0];
+	result = [NSColor colorWithCalibratedRed: (float)redByte / 0xff
+        green: (float)greenByte / 0xff
+        blue:	(float)blueByte	/ 0xff
+        alpha: 1.0];
     
 	return result;
 }
 
 - (CGFloat) calculateColorBrightness
 {
-    return (([[self colorValue] redComponent] * 299) + ([[self colorValue] greenComponent] * 587) + ([[self colorValue] blueComponent] * 114)) / 1000.0;
+    return (([[self colorValue] redComponent] * 299) +
+        ([[self colorValue] greenComponent] * 587) +
+        ([[self colorValue] blueComponent] * 114)) / 1000.0;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
+
     if (self = [super init]) {
         self.hexValue = [decoder decodeObjectForKey:kHexValueNSCodingKey];
-        self.width = [decoder decodeObjectForKey:kWidthNSCodingKey];
+        self.width    = [decoder decodeObjectForKey:kWidthNSCodingKey];
     }
+    
     return self;
 }
 

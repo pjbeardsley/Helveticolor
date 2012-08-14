@@ -24,7 +24,6 @@
 @property (retain) id colourLoversLink;
 @property (retain) id paletteChangeIntervalSlider;
 @property (retain) id showPaletteTypePopUpButton;
-@property (retain) NSMutableArray *colors;
 @property (retain) NSMutableArray *palettes;
 @property (assign) int paletteChangeInterval;
 @property (retain) NSDate *paletteLastChanged;
