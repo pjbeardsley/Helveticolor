@@ -183,7 +183,7 @@ h1 {
   margin: 150px auto 0 auto;
 }
   #demo #mask {
-    background: url('/img/imac.png');
+    background: url('../img/imac.png');
     position: absolute;
     left:0; top:0;
     width: 498px;
