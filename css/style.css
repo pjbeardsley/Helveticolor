@@ -14,9 +14,12 @@ body { margin: 0; font-size: 1em; line-height: 1.4; }
 ::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
 
-a { color: #00e; }
-a:visited { color: #551a8b; }
-a:hover { color: #06e; }
+a {
+  color: #3381c9;
+  text-decoration: none;
+}
+a:visited { color: #4183C4; }
+a:hover { color: #3e9ef7; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline: 0; }
 
@@ -71,23 +74,19 @@ td { vertical-align: top; }
 
 
 /* ===== Primary Styles ========================================================
-   Author:
+   Author: Peter Beardsley
    ========================================================================== */
 body {
-  background: #000000;
+  background: #333333;
   color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 18px;
   margin: 0;
   padding: 0;
 }
 
-
-h1 {
-  font-size: 72px;
-  margin: auto;
-  text-align: center;
-}
-
+/* Github banner (courtesy of http://www.terrenceryan.com/blog/post.cfm/github-ribbons-in-css). */
 #banner{
   float: right;
   height: 149px;
@@ -148,8 +147,70 @@ h1 {
     color-stop(0.95, #666666),
     color-stop(0.97, #000000)
   );  
-
 }
+
+#nav_and_header_container {
+  width: 850px;
+  margin: auto;
+}
+ul#nav {
+  margin: 5px 0 0 0;
+  padding: 0;
+  float: right;
+}
+  ul#nav li {
+    list-style-type: none;
+    display: inline;
+    margin: 0 20px 0 0;
+  }
+
+h1 {
+  clear: both;
+  font-size: 8em;
+  line-height: 0;
+}
+
+#main {
+  margin: 0 30px 0 30px;
+}
+
+#main p {
+  margin: 100px 17% 0 17%;
+}
+
+#demo {
+  width: 498px;
+  margin: 150px auto 0 auto;
+}
+  #demo #mask {
+    background: url('/img/imac.png');
+    position: absolute;
+    left:0; top:0;
+    width: 498px;
+    height: 399px;
+  }
+  #demo #screen_contents_container {
+    z-index: 0;
+    position: relative;
+    width: 498px;
+    height: 399px;
+    display: block;
+  }
+  #screen_contents {
+    left:0; top:0;
+    position: absolute;
+    margin: 21px 0 0 21px;
+    width: 456px;
+    height: 256px;
+    background-color: #000000;
+    font-size: 3em;    
+  }
+    #screen_contents span {
+      display: block;
+      text-align: center;
+      margin: 90px auto;
+      font-weight: bold;
+    }
 
 
 /* =============================================================================
