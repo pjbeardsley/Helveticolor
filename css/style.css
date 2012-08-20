@@ -17,6 +17,7 @@ body { margin: 0; font-size: 1em; line-height: 1.4; }
 a {
   color: #3381c9;
   text-decoration: none;
+  text-shadow:1px 1px 1px #000000;
 }
 a:visited { color: #4183C4; }
 a:hover { color: #3e9ef7; }
@@ -154,14 +155,15 @@ body {
   margin: auto;
 }
 ul#nav {
-  margin: 5px 0 0 0;
+  margin: 5px 15px 0 0;
   padding: 0;
   float: right;
 }
   ul#nav li {
     list-style-type: none;
     display: inline;
-    margin: 0 20px 0 0;
+    margin: 0 0 0 20px;
+    padding: 0;
   }
 
 h1 {
