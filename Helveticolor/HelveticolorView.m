@@ -99,7 +99,7 @@ typedef enum {
             
     }
             
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:3] autorelease];
     [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
 
     NSURLResponse *response = nil;
