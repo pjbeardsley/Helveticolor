@@ -9,7 +9,23 @@ audio:not([controls]) { display: none; }
 
 html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 html, button, input, select, textarea { font-family: sans-serif; color: #222; }
-body { margin: 0; font-size: 1em; line-height: 1.4; }
+body {
+  background-color: rgb(25, 25, 25);
+  color: #ffffff;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  height: 1500px;
+  line-height: 1.4; 
+}
+
+body#home {
+  background: -webkit-radial-gradient(50% 30%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
+  background: -moz-radial-gradient(50% 30%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 53%, rgb(64, 64, 64) 53.5%, rgb(54, 54, 54) 58%, rgb(30, 30, 30));
+  background-repeat: no-repeat;
+}
 
 ::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
@@ -76,19 +92,6 @@ td { vertical-align: top; }
 /* ===== Primary Styles ========================================================
    Author: Peter Beardsley
    ========================================================================== */
-body {
-  background: -webkit-radial-gradient(50% 40%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(53%, rgb(44, 44, 44)), color-stop(53.5%, rgb(64, 64, 64)), color-stop(58%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
-  background: -moz-radial-gradient(50% 40%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 53%, rgb(64, 64, 64) 53.5%, rgb(54, 54, 54) 58%, rgb(30, 30, 30));
-  background-repeat: no-repeat;
-  background-color: rgb(25, 25, 25);
-  color: #ffffff;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-  height: 1250px;
-}
 
 /* Github banner (courtesy of http://www.terrenceryan.com/blog/post.cfm/github-ribbons-in-css). */
 #banner{
@@ -153,7 +156,7 @@ body {
   );  
 }
 
-#nav_and_header_container {
+body#home #nav_and_header_container {
   width: 850px;
   margin: auto;
 }
@@ -171,14 +174,20 @@ ul#nav {
 
 h1 {
   clear: both;
-  font-size: 145px;
   line-height: 0;
   text-shadow:2px 2px 2px #000000;
 }
 
+body#home h1 {
+  font-size: 145px;  
+}
+
 #main {
   margin: 0 30px 0 30px;
-  text-align: center;
+}
+
+body#home #main {
+  text-align: center;  
 }
 
 p#intro {
