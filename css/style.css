@@ -22,8 +22,10 @@ body {
 }
 
 body#home {
-  background: -webkit-radial-gradient(50% 30%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
-  background: -moz-radial-gradient(50% 30%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 53%, rgb(64, 64, 64) 53.5%, rgb(54, 54, 54) 58%, rgb(30, 30, 30));
+
+
+  background: -webkit-radial-gradient(50% 30%, circle cover, rgba(255,255,255,0.075) 0%,rgba(255,255,255,0) 40%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
+  background: -moz-radial-gradient(50% 30%, circle closest-corner, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 44%, rgb(64, 64, 64) 44.5%, rgb(54, 54, 54) 48%, rgb(30, 30, 30));
   background-repeat: no-repeat;
 }
 
@@ -209,21 +211,21 @@ p#intro {
     background: url('../img/imac.png');
     position: absolute;
     left:0; top:0;
-    width: 498px;
-    height: 399px;
+    width: 500px;
+    height: 400px;
   }
   #demo #screen_contents_container {
     z-index: 0;
     position: relative;
-    width: 498px;
-    height: 399px;
+    width: 500px;
+    height: 400px;
     display: block;
   }
   #screen_contents {
     left:0; top:0;
     position: absolute;
     margin: 21px 0 0 21px;
-    width: 456px;
+    width: 457px;
     height: 256px;
     background-color: #000000;
     font-size: 3em;    
@@ -284,6 +286,16 @@ a.download_button i {
 
 @media only screen and (min-width: 35em) {
 	/* Style adjustments for viewports that meet the condition */
+}
+
+/* retina graphics */
+@media only screen and (-Webkit-min-device-pixel-ratio: 1.5),
+only screen and (-moz-min-device-pixel-ratio: 1.5),
+only screen and (-o-min-device-pixel-ratio: 3/2),
+only screen and (min-device-pixel-ratio: 1.5) {
+  #demo #mask {
+    background: url('../img/imac@2x.png');
+  }
 }
 
 /* =============================================================================
