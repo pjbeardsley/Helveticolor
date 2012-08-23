@@ -17,7 +17,6 @@ body { margin: 0; font-size: 1em; line-height: 1.4; }
 a {
   color: #3381c9;
   text-decoration: none;
-  text-shadow:1px 1px 1px #000000;
 }
 a:visited { color: #4183C4; }
 a:hover { color: #3e9ef7; }
@@ -78,13 +77,17 @@ td { vertical-align: top; }
    Author: Peter Beardsley
    ========================================================================== */
 body {
-  background: #333333;
+  background: -webkit-radial-gradient(50% 40%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(53%, rgb(44, 44, 44)), color-stop(53.5%, rgb(64, 64, 64)), color-stop(58%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
+  background: -moz-radial-gradient(50% 40%, circle closest-corner, rgb(64, 64, 64), rgb(44, 44, 44), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 53%, rgb(64, 64, 64) 53.5%, rgb(54, 54, 54) 58%, rgb(30, 30, 30));
+  background-repeat: no-repeat;
+  background-color: rgb(25, 25, 25);
   color: #ffffff;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
   font-size: 18px;
   margin: 0;
   padding: 0;
+  height: 1250px;
 }
 
 /* Github banner (courtesy of http://www.terrenceryan.com/blog/post.cfm/github-ribbons-in-css). */
@@ -175,16 +178,18 @@ h1 {
 
 #main {
   margin: 0 30px 0 30px;
+  text-align: center;
 }
 
 p#intro {
-  margin: 100px 17% 0 17%;
+  margin: 75px auto 50px auto;
+  width: 820px;
   font-size: 30px;
-  line-height: 35px;
+  line-height: 40px;
+  text-align: left;
 }
   p#intro strong {
     font-size: 35px;
-    text-shadow:2px 2px 2px #000000;
   }
 
 #demo {
@@ -228,6 +233,42 @@ p#intro {
       float: right;
     }
 
+a.download_button {
+  -moz-box-shadow:inset 0px 1px 0px 0px #a4e271;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #a4e271;
+  box-shadow:inset 0px 1px 0px 0px #a4e271;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #89c403), color-stop(1, #77a809) );
+  background:-moz-linear-gradient( center top, #89c403 5%, #77a809 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#89c403', endColorstr='#77a809');
+  background-color:#89c403;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #74b807;
+  display:inline-block;
+  color:#ffffff;
+  font-size:24px;
+  font-weight:bold;
+  padding:7px 15px;
+  text-decoration:none;
+  text-shadow:1px 1px 16px #528009;
+  margin: 0 0 100px 0;
+  cursor: pointer;
+}
+a.download_button:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #77a809), color-stop(1, #89c403) );
+  background:-moz-linear-gradient( center top, #77a809 5%, #89c403 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77a809', endColorstr='#89c403');
+  background-color:#77a809;
+}
+a.download_button:active {
+  position:relative;
+  top:1px;
+}
+a.download_button i {
+  font-size: 28px;
+  line-height: 8px;
+}
 /* =============================================================================
    Media Queries
    ========================================================================== */
