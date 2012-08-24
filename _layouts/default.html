@@ -20,13 +20,25 @@
 </head>
 <body id="{{ page.id }}">
 <header>
-	<div id="banner"><a href="https://github.com/pjbeardsley/Helveticolor">Fork me on GitHub</a></div>
+	<div id="github_banner"><a href="https://github.com/pjbeardsley/Helveticolor">Fork me on GitHub</a></div>
 	<div id="nav_and_header_container">
 		<ul id="nav">
+			    {% for link in site.navigation %}
+			      {% assign active = nil %}
+			      {% if page.url == link.url or page.layout == link.layout %}
+			        {% assign active = 'active' %}
+			      {% endif %}
+
+			      <li class="{% if forloop.first %}first{% endif %} {{ active }} {% if forloop.last %}last{% endif %}">
+			        <a class="{{ active }}" href="{{ link.url }}">{{ link.text }}</a>
+			      </li>
+			    {% endfor %}
+		<!--
 			<li><a href="/">Home</a></li>
 			<li><a href="/help.html">Help</a></li>
 			<li><a href="/release_notes.html">Release Notes</a></li>
 			<li><a href="#">Download</a></li>
+		-->
 		</ul>
 		<h1>Helveticolor</h1>
 	</div>
