@@ -1,5 +1,5 @@
 $(function () {
-	if (window.location.pathname === '/') {
+	if ((window.location.pathname === '/') || (window.location.pathname === '/Helveticolor/')) {
 		var curColor = 0;
 		var colors = [];
 		var title = '';
