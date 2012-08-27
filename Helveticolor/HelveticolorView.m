@@ -38,24 +38,20 @@ static double const kColourLoversLogoRGBValuesUpper = 193.0;
 static double const kColourLoversLogoRGBValuesLower = 239.0;
 
 // scaling "magic number" constants
-static double const kSplashScreenTitleFontSizeScale        =   0.25;
-static double const kPoweredByFontSizeScale                =   0.0225;
-static double const kPoweredByYOffSetScale                 =   0.15;
-static double const kColourLoversLogoFontSizeScale         =   0.04;
-static double const kColourLoversLogoFontKerningScaleUpper = -20.0;
-static double const kColourLoversLogoFontKerningScaleLower = -28.0;
-static double const kColourLoversLogoYOffsetScale          =   0.10;
-static double const kFullPaletteFontSizeVerticalScale      =   0.04;
-static double const kFullPaletteFontSizeHorizontalScale    =   0.02;
-static double const kFullPaletteXOffsetVerticalScale       =   0.01;
-static double const kFullPaletteXOffsetHorizontalScale     =   0.005;
-static double const kFullPaletteMinWidthForVerticalLabel   =   0.025;
-static double const kFullPaletteMinWidthForHorizontalLabel =   0.04;
-static double const kSingleColorAlphaFontSizeScale         =   0.25;
-static double const kSingleColorNumericFontSizeScale       =   0.255;
-static double const kSingleColorSecondaryTextFontSizeScale =   0.04;
-static double const kSingleColorSecondaryTextXOffsetScale  =   0.01;
-static double const kSingleColorSecondaryTextYOffsetScale  =   0.01;
+static double const kSplashScreenTitleFontSizeScale        = 0.25;
+static double const kSplashScreenURLFontSizeScale          = 0.025;
+static double const kSplashScreenURLYOffsetScale           = 0.075;
+static double const kFullPaletteFontSizeVerticalScale      = 0.04;
+static double const kFullPaletteFontSizeHorizontalScale    = 0.02;
+static double const kFullPaletteXOffsetVerticalScale       = 0.01;
+static double const kFullPaletteXOffsetHorizontalScale     = 0.005;
+static double const kFullPaletteMinWidthForVerticalLabel   = 0.025;
+static double const kFullPaletteMinWidthForHorizontalLabel = 0.04;
+static double const kSingleColorAlphaFontSizeScale         = 0.25;
+static double const kSingleColorNumericFontSizeScale       = 0.255;
+static double const kSingleColorSecondaryTextFontSizeScale = 0.04;
+static double const kSingleColorSecondaryTextXOffsetScale  = 0.01;
+static double const kSingleColorSecondaryTextYOffsetScale  = 0.01;
 
 typedef enum {
     kShowPalettesTop,
@@ -79,6 +75,8 @@ typedef enum {
 @synthesize paletteLastChanged;
 @synthesize firstTime;
 @synthesize curOrientation;
+@synthesize xmlConnection;
+@synthesize xmlData;
 
 
 - (void)refreshPaletteListForType:(int) showPalettesType
@@ -102,16 +100,23 @@ typedef enum {
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:3] autorelease];
     [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
 
-    NSURLResponse *response = nil;
-    NSError *error          = nil;
-    NSData *data            = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    self.xmlConnection = [[[NSURLConnection alloc] initWithRequest: request delegate: self startImmediately: YES] autorelease];
     
-    if (!data) {
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)mdata {
+    [self.xmlData appendData: mdata];
+    NSLog(@"!!pcb got here: %@", self.xmlData);
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    if (!self.xmlData) {
         [self readPalettesFromCache];
         return;
     }
     
-    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:data options:0 error:&error] autorelease];
+    NSError *error          = nil;
+    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:self.xmlData options:0 error:&error] autorelease];
     
     if (!xmlDoc) {
         [self readPalettesFromCache];
@@ -127,6 +132,10 @@ typedef enum {
     }
     
     [self writePalettesToCache];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+
 }
 
 
@@ -229,7 +238,7 @@ typedef enum {
 
 - (void) drawSplashScreen
 {
-    Color *color = [[[Color alloc]initWithHexValue: @"000000" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
+    Color *color = [[[Color alloc]initWithHexValue: @"333333" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
     [[color colorValue] set];
     
     // draw the background
@@ -260,54 +269,25 @@ typedef enum {
     int yOffset     = (rect.size.height / 2) - (attrSize.height / 2);
 
     [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
+
+    // draw project URL
+    textColor = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:0.5];
+    fontSize  = (int)(rect.size.height * kSplashScreenURLFontSizeScale);
     
-    // draw "powered by"
-    fontSize       = (int)(rect.size.height * kPoweredByFontSizeScale);
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSFont fontWithName:@"Helvetica Neue" size:fontSize], NSFontAttributeName,
-        textColor, NSForegroundColorAttributeName,
-        nil];
-                        
-    attributedText = [[[NSAttributedString alloc] initWithString: @"powered by" attributes: textAttributes] autorelease];
-    attrSize       = [attributedText size];
-    xOffset        = (rect.size.width / 2) - (attrSize.width / 2);
-    yOffset        = (rect.size.height * kPoweredByYOffSetScale);
+                                    [NSFont fontWithName:@"Helvetica" size:fontSize], NSFontAttributeName,
+                                    textColor, NSForegroundColorAttributeName,
+                                    nil];
+    
+    attributedText = [[[NSAttributedString alloc] initWithString:
+                                           @"http://pjbeardsley.github.com/Helveticolor" attributes: textAttributes] autorelease];
+    
+    attrSize = [attributedText size];
+    xOffset     = (rect.size.width / 2) - (attrSize.width / 2);
+    yOffset     = rect.size.height * kSplashScreenURLYOffsetScale;
     
     [attributedText drawAtPoint:NSMakePoint(xOffset, yOffset)];
     
-    // draw COLOURLovers logo
-    fontSize       = (int)(rect.size.height * kColourLoversLogoFontSizeScale);
-    textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSFont fontWithName:@"Arial Bold" size:fontSize], NSFontAttributeName,
-        [NSColor colorWithCalibratedRed:(kColourLoversLogoRGBValuesUpper / 255.0)
-            green:(kColourLoversLogoRGBValuesUpper / 255.0)
-            blue:(kColourLoversLogoRGBValuesUpper / 255.0)
-            alpha:1.0], NSForegroundColorAttributeName,
-        [NSNumber numberWithFloat:(fontSize / kColourLoversLogoFontKerningScaleUpper)], NSKernAttributeName,
-        nil];
-    
-    NSMutableAttributedString *colourLoversLogo = [[[NSMutableAttributedString alloc] initWithString: @"COLOUR"
-        attributes: textAttributes] autorelease];
-    
-    textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSFont fontWithName:@"Arial" size:fontSize], NSFontAttributeName,
-        [NSColor colorWithCalibratedRed:(kColourLoversLogoRGBValuesLower / 255.0)
-            green:(kColourLoversLogoRGBValuesLower / 255.0)
-            blue:(kColourLoversLogoRGBValuesLower / 255.0)
-            alpha:1.0], NSForegroundColorAttributeName,
-        [NSNumber numberWithFloat:(fontSize / kColourLoversLogoFontKerningScaleLower)], NSKernAttributeName,
-        nil];
-                        
-    NSMutableAttributedString *loversText = [[[NSMutableAttributedString alloc] initWithString: @"lovers"
-        attributes: textAttributes] autorelease];
-    
-    [colourLoversLogo appendAttributedString:loversText];
-                            
-    attrSize = [colourLoversLogo size];
-    xOffset  = (rect.size.width / 2) - (attrSize.width / 2);
-    yOffset  = (rect.size.height * kColourLoversLogoYOffsetScale);
-    
-    [colourLoversLogo drawAtPoint:NSMakePoint(xOffset, yOffset)];
 }
 
 

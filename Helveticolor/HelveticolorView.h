@@ -27,6 +27,8 @@
 @property (retain) NSMutableArray *palettes;
 @property (assign) int paletteChangeInterval;
 @property (retain) NSDate *paletteLastChanged;
+@property (retain) NSURLConnection *xmlConnection;
+@property (retain) NSMutableData *xmlData;
 
 - (void)refreshPaletteListForType:(int) showPalettesType;
 
