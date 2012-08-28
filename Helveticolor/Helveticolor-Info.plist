@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>0.1.0</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2012 __MyCompanyName__. All rights reserved.</string>
+	<string>Copyright © 2012 Peter Beardsley. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>HelveticolorView</string>
 </dict>
