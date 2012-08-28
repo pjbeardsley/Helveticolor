@@ -12,7 +12,7 @@ html, button, input, select, textarea { font-family: sans-serif; color: #222; }
 body {
   background-color: rgb(41, 41, 41);
   color: #ffffff;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
   font-size: 18px;
   margin: 0;
@@ -21,10 +21,10 @@ body {
 }
 
 body#home {
-  background: -webkit-radial-gradient(50% 30%, circle cover, rgba(255,255,255,0.075) 0%,rgba(255,255,255,0) 40%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
+  background: -webkit-radial-gradient(30% 30%, circle cover, rgba(255,255,255,0.075) 0%,rgba(255,255,255,0) 40%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
   background: -moz-radial-gradient(50% 30%, circle closest-corner, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 44%, rgb(64, 64, 64) 44.5%, rgb(54, 54, 54) 48%, rgb(30, 30, 30));
+  background-size: auto 1500px;
   background-repeat: no-repeat;
-  height: 1500px;
 }
 
 ::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
@@ -186,6 +186,7 @@ h1 {
 }
 
 body#home h1 {
+  margin: 20px 0 0 0;
   font-size: 150px;
   text-align: center;
 }
@@ -284,10 +285,14 @@ a.download_button i {
 }
 
 footer {
+  font-size: 14px;
   margin: 0;
-  padding: 0;
+  padding: 10px 10px 0 10px;
   position: absolute;
   bottom: 0;
+  width: 99%;
+  background-color: #555555;
+  height: 40px;
 }
 
 /* =============================================================================
@@ -298,7 +303,7 @@ footer {
     display: none;
   }
   body#home h1 {
-    font-size: 130px;
+    font-size: 120px;
   }
 
   body#home #nav_and_header_container,
@@ -349,7 +354,7 @@ only screen and (-moz-min-device-pixel-ratio: 1.5),
 only screen and (-o-min-device-pixel-ratio: 3/2),
 only screen and (min-device-pixel-ratio: 1.5) {
   #demo #mask {
-    background: url('../img/imac@2x.png');
+    background: url('../img/imac@2x.png') top left 1000px 800px;
   }
 }
 
