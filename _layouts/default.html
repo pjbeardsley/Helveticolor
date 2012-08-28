@@ -30,7 +30,7 @@
 			      {% endif %}
 
 			      <li{% if active == 'true' %} {{ 'class="active"' }} {% endif %}>
-			        <a href="{% if link.is_download != 'true' %}{{ '/Helveticolor' }}{% endif %}{{ link.url }}">{{ link.text }}</a>
+			        <a href="{% if link.text != 'Download' %}{{ '/Helveticolor' }}{% endif %}{{ link.url }}">{{ link.text }}</a>
 			      </li>
 			    {% endfor %}
 		<!--

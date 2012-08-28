@@ -7,5 +7,4 @@ navigation:
   url: /release_notes.html
 - text: Download
   url: https://github.com/downloads/pjbeardsley/Helveticolor/Helveticolor_0.1.0.zip
-  is_download: true
 layout: default
