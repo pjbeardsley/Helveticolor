@@ -26,11 +26,11 @@
 			    {% for link in site.navigation %}
 			      {% assign active = nil %}
 			      {% if page.url == link.url or page.layout == link.layout %}
-			        {% assign active = 'active' %}
+			        {% assign active = 'true' %}
 			      {% endif %}
 
-			      <li class="{% if forloop.first %}first{% endif %} {{ active }} {% if forloop.last %}last{% endif %}">
-			        <a class="{{ active }}" href="{{ link.url }}">{{ link.text }}</a>
+			      <li{% if active == 'true' %} {{ 'class="active"' }} {% endif %}>
+			        <a href="/Helveticolor{{ link.url }}">{{ link.text }}</a>
 			      </li>
 			    {% endfor %}
 		<!--

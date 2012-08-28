@@ -174,7 +174,7 @@ ul#nav {
     margin: 0 20px 0 0;
     padding: 0;
   }
-  ul#nav li a.active {
+  ul#nav li.active a {
     color: #fff;
   }
 

@@ -1,10 +1,11 @@
 navigation:
 - text: Home
-  url: /Helveticolor/
+  url: /index.html
 - text: Help
-  url: /Helveticolor/help.html
+  url: /help.html
 - text: Release Notes
-  url: /Helveticolor/release_notes.html
+  url: /release_notes.html
 - text: Download
   url: http://google.com/foo.zip
-  layout: default
+  is_download: true
+layout: default
