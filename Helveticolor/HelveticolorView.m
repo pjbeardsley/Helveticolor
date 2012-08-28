@@ -97,16 +97,21 @@ typedef enum {
             
     }
             
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:3] autorelease];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url
+        cachePolicy:NSURLRequestUseProtocolCachePolicy
+        timeoutInterval:3] autorelease];
     [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
+    
+    self.xmlData = [NSMutableData data];
 
-    self.xmlConnection = [[[NSURLConnection alloc] initWithRequest: request delegate: self startImmediately: YES] autorelease];
+    self.xmlConnection = [[[NSURLConnection alloc] initWithRequest:request
+        delegate:self
+        startImmediately:YES] autorelease];
     
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)mdata {
     [self.xmlData appendData: mdata];
-    NSLog(@"!!pcb got here: %@", self.xmlData);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -135,7 +140,7 @@ typedef enum {
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-
+    [self readPalettesFromCache];
 }
 
 
@@ -275,12 +280,12 @@ typedef enum {
     fontSize  = (int)(rect.size.height * kSplashScreenURLFontSizeScale);
     
     textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSFont fontWithName:@"Helvetica" size:fontSize], NSFontAttributeName,
-                                    textColor, NSForegroundColorAttributeName,
-                                    nil];
+        [NSFont fontWithName:@"Helvetica" size:fontSize], NSFontAttributeName,
+        textColor, NSForegroundColorAttributeName,
+        nil];
     
     attributedText = [[[NSAttributedString alloc] initWithString:
-                                           @"http://pjbeardsley.github.com/Helveticolor" attributes: textAttributes] autorelease];
+        @"http://pjbeardsley.github.com/Helveticolor" attributes: textAttributes] autorelease];
     
     attrSize = [attributedText size];
     xOffset     = (rect.size.width / 2) - (attrSize.width / 2);

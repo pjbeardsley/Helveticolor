@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B127C85715EB0570006329E5 /* thumbnail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B127C85615EB0570006329E5 /* thumbnail@2x.png */; };
+		B13C0AC315EC4AAA00B56B11 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B13C0AC215EC4AAA00B56B11 /* LICENSE */; };
 		B13CB888154E0EA9006A688E /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = B13CB886154E0EA9006A688E /* Color.h */; };
 		B13CB889154E0EA9006A688E /* Color.m in Sources */ = {isa = PBXBuildFile; fileRef = B13CB887154E0EA9006A688E /* Color.m */; };
 		B13F77E7154636F800FBB308 /* ConfigSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13F77E6154636F800FBB308 /* ConfigSheet.xib */; };
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		B127C85615EB0570006329E5 /* thumbnail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumbnail@2x.png"; sourceTree = "<group>"; };
+		B13C0AC215EC4AAA00B56B11 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B13CB886154E0EA9006A688E /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		B13CB887154E0EA9006A688E /* Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Color.m; sourceTree = "<group>"; };
 		B13F77E6154636F800FBB308 /* ConfigSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfigSheet.xib; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				D063F17E152B5F6400C41757 /* Helveticolor-Info.plist */,
 				D063F17F152B5F6400C41757 /* InfoPlist.strings */,
 				D063F182152B5F6400C41757 /* Helveticolor-Prefix.pch */,
+				B13C0AC215EC4AAA00B56B11 /* LICENSE */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				D063F181152B5F6400C41757 /* InfoPlist.strings in Resources */,
 				B13F77E7154636F800FBB308 /* ConfigSheet.xib in Resources */,
 				B127C85715EB0570006329E5 /* thumbnail@2x.png in Resources */,
+				B13C0AC315EC4AAA00B56B11 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

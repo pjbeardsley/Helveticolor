@@ -55,9 +55,7 @@ static NSString * const kColorsNSCodingKey   = @"Colors";
         [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue]
             andWidth: [widths objectAtIndex:[curNode index]]] autorelease]];
     }
-    
-
-    
+        
     return self;
 }
 
