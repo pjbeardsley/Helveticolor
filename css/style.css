@@ -282,6 +282,14 @@ a.download_button i {
   font-size: 28px;
   line-height: 8px;
 }
+
+footer {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+}
+
 /* =============================================================================
    Media Queries
    ========================================================================== */

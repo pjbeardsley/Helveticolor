@@ -1,9 +1,11 @@
 ---
 layout: default
-title: Helveticolor
+title: Helveticolor — Help
 id: interior
 ---
 
 ## Help
 
-- How do I install Helveticolor?
+### <a id="how_do_i_install"></a>How do I install Helveticolor?
+
+Helveticolor is installed by 
