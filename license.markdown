@@ -1,10 +1,8 @@
 ---
 layout: default
-title: Helveticolor — License
+title: License
 id: interior
 ---
-
-## License
 
 Copyright (c) 2012, Peter Beardsley
 

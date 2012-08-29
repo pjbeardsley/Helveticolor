@@ -1,34 +1,35 @@
 ---
 layout: default
-title: Helveticolor — Help
+title: Help
 id: interior
 ---
 
-## Help
+## What versions of OS X does Helveticolor support?
 
-### How do I install Helveticolor?
+Helveticolor supports OS X 10.7 (Lion) and up.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+## How do I install Helveticolor?
 
-### What are Helveticolor's licensing terms?
+- On OS X 10.7 (Lion), simply unzip Helveticolor and double-click on `Helveticolor.saver`.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+- On OS X 10.8 (Mountain Lion), the proccess is a bit more involved because Helveticolor
+is an unsigned app.[^1]
 
-### I have a bug report or enhancement for Helveticolor.  How should I contact the developer?
+  1. Unzip Helveticolor and right-click on `Helveticolor.saver`.  Choose `Open`. ![Open](/Helveticolor/img/helveticolor_open.png)
+  2. A dialog will appear to confirm the opening of an unsigned application—click `Open`. ![Are You Sure](/Helveticolor/img/helveticolor_are_you_sure.png)
+  3. In System Preferences, a sheet will determine which users Helveticolor will be installed for—typically 'Install for this user only' is sufficient. ![Install for user](/Helveticolor/img/helveticolor_install_for_user.png)
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+## What are Helveticolor's licensing terms?
+
+Helveticolor is licensed under the [MIT License](http://opensource.org/licenses/mit-license.php).  The project source is available on [Github](https://github.com/pjbeardsley/Helveticolor).
+
+## I have a bug report or enhancement suggestion for Helveticolor.  How should I contact you?
+
+Please feel free to contact me via [Twitter](http://twitter.com/helveticolor), or submit a pull request via [Github](https://github.com/pjbeardsley/Helveticolor).
+
+[^1]: In OS X 10.8, Apple added a security feature named
+[Gatekeeper](http://www.apple.com/osx/what-is/security.html). In short, the default
+settings discourage the installation of applications that are not cryptographically
+signed with an Apple Developer ID. Since Helveticolor is an Open Source project
+developed in my spare time, I've opted against the $100/year program fee that
+would be required to sign the app.

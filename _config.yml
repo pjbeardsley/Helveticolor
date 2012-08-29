@@ -1,10 +1,14 @@
 navigation:
 - text: Home
   url: /index.html
+  icon: icon-home
 - text: Help
   url: /help.html
+  icon: icon-question-sign
 - text: Release Notes
   url: /release_notes.html
+  icon: icon-pencil
 - text: Download
   url: https://github.com/downloads/pjbeardsley/Helveticolor/Helveticolor_0.1.0.zip
+  icon: icon-download
 layout: default

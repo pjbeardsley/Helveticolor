@@ -14,14 +14,14 @@ body {
   color: #ffffff;
   font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
-  font-size: 18px;
+  font-size: 16px;
   margin: 0;
   padding: 0;
   line-height: 1.4; 
 }
 
 body#home {
-  background: -webkit-radial-gradient(30% 30%, circle cover, rgba(255,255,255,0.075) 0%,rgba(255,255,255,0) 40%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
+  background: -webkit-radial-gradient(37% 30%, circle cover, rgba(255,255,255,0.075) 0%,rgba(255,255,255,0) 40%), -webkit-gradient(linear, left top, left bottom, from(rgb(41, 41, 41)), color-stop(44%, rgb(44, 44, 44)), color-stop(44.5%, rgb(64, 64, 64)), color-stop(48%, rgb(54, 54, 54)), to(rgb(30, 30, 30)));
   background: -moz-radial-gradient(50% 30%, circle closest-corner, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0), transparent 90%), -moz-linear-gradient(top, rgb(41, 41, 41), rgb(44, 44, 44) 44%, rgb(64, 64, 64) 44.5%, rgb(54, 54, 54) 48%, rgb(30, 30, 30));
   background-size: auto 1500px;
   background-repeat: no-repeat;
@@ -173,6 +173,13 @@ ul#nav {
     display: inline;
     margin: 0 20px 0 0;
     padding: 0;
+    vertical-align: center;
+  }
+  ul#nav li i {
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #111111;
+    width: 1em;
+    vertical-align: center;
   }
   ul#nav li.active a {
     color: #fff;
@@ -181,7 +188,7 @@ ul#nav {
 h1 {
   margin: 0;
   padding: 0;
-  font-size: 100px;
+  font-size: 80px;
   text-shadow:2px 2px 2px #000000;
 }
 
@@ -286,14 +293,29 @@ a.download_button i {
 
 footer {
   font-size: 14px;
+  font-weight: 400;
   margin: 0;
-  padding: 10px 10px 0 10px;
-  position: absolute;
+  padding: 10px;
+  position: fixed;
   bottom: 0;
   width: 99%;
   background-color: #555555;
-  height: 40px;
 }
+  footer span {
+    float: right;
+    margin-right: 10px;
+  }
+
+ol li img {
+  margin: 15px 0 15px 0;
+}
+
+ul.release_notes li {
+  list-style-type: none;
+}
+  ul.release_notes li i {
+    font-size: 15px;
+  }
 
 /* =============================================================================
    Media Queries
@@ -326,6 +348,7 @@ footer {
   body#home {
     background: rgb(41, 41, 41);
     height: auto;
+
   }
   body#home #nav_and_header_container,
   body#home #main {
@@ -345,6 +368,12 @@ footer {
 
   a.download_button {
     display: none;
+  }
+
+  body#interior #nav_and_header_container,
+  body#interior #main {
+    width: auto;
+    margin: 0 3% 0 3%;
   }
 }
 
