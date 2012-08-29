@@ -173,7 +173,7 @@ ul#nav {
     display: inline;
     margin: 0 20px 0 0;
     padding: 0;
-    vertical-align: center;
+    font-size: 20px;
   }
   ul#nav li i {
     font-size: 20px;
@@ -316,6 +316,10 @@ ul.release_notes li {
   ul.release_notes li i {
     font-size: 15px;
   }
+
+h2 {
+  margin-top: 50px;
+}
 
 /* =============================================================================
    Media Queries
