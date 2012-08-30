@@ -31,10 +31,10 @@ body#home {
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
 
 a {
-  color: #0c65a4;
+  color: #4183C4;
   text-decoration: none;
 }
-a:visited { color: #0c65a4; }
+a:visited { color: #4183C4; }
 a:hover { color: #3e9ef7; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline: 0; }
