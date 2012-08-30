@@ -11,7 +11,7 @@ html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 10
 html, button, input, select, textarea { font-family: sans-serif; color: #222; }
 body {
   background-color: rgb(41, 41, 41);
-  color: #ffffff;
+  color: #eee;
   font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
   font-size: 16px;
@@ -31,10 +31,10 @@ body#home {
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
 
 a {
-  color: #3381c9;
+  color: #0c65a4;
   text-decoration: none;
 }
-a:visited { color: #4183C4; }
+a:visited { color: #0c65a4; }
 a:hover { color: #3e9ef7; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline: 0; }
@@ -93,71 +93,6 @@ td { vertical-align: top; }
    Author: Peter Beardsley
    ========================================================================== */
 
-/* Github banner (courtesy of http://www.terrenceryan.com/blog/post.cfm/github-ribbons-in-css). */
-#github_banner{
-  float: right;
-  height: 149px;
-  width: 149px;
-  overflow:hidden;
-  padding: 0;
-  margin: 0;
-  z-index: 2;
-}
-
-#github_banner a {
-  display: block;
-  width: 190px;
-  font-size: 14px;
-  font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", 
-    "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, 
-    Geneva, "Helvetica Neue", Helvetica, Arial, sans serif;
-  background-color: #333;
-  color: #FFF;
-  word-spacing: 2px;
-  text-decoration: none;
-  padding: 5px 15px 5px 25px;
-
-  position:relative;
-  left: 20px;
-  top: -37px;
-  text-align: center;
-
-  -moz-transform-origin: 0 0 ;
-  -moz-transform:rotate(45deg);
-  -moz-box-shadow:    1px 1px 5px 1px #666;
-
-  -webkit-transform-origin: 0 0 ; 
-  -webkit-transform:rotate(45deg);
-  -webkit-box-shadow: 1px 1px 5px 1px #666;
-
-  -ms-transform-origin: 0 0 ; 
-  -ms-transform:rotate(45deg);
-  -ms-box-shadow: 1px 1px 5px 1px #666;
-
-  transform-origin: 0 0 ; 
-  transform:rotate(45deg);
-  box-shadow: 1px 1px 5px 1px #666;
-
-  background-image: linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
-  background-image: -o-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
-  background-image: -moz-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
-  background-image: -webkit-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
-  background-image: -ms-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
-
-  background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.03, #000000),
-    color-stop(0.05, #666666),
-    color-stop(0.07, #000000),
-    color-stop(0.93, #000000),
-    color-stop(0.95, #666666),
-    color-stop(0.97, #000000)
-  );  
-}
-
-
  #nav_and_header_container,
  #main {
   width: 850px;
@@ -182,7 +117,7 @@ ul#nav {
     vertical-align: center;
   }
   ul#nav li.active a {
-    color: #fff;
+    color: #eee;
   }
 
 h1 {
@@ -295,16 +230,23 @@ footer {
   font-size: 14px;
   font-weight: 400;
   margin: 0;
-  padding: 10px;
+  padding: 7px;
   position: fixed;
   bottom: 0;
   width: 99%;
-  background-color: #555555;
+  background-color: #333;
 }
-  footer span {
-    float: right;
-    margin-right: 10px;
-  }
+span#copyright {
+  line-height: 24px;
+}
+span#links {
+  float: right;
+  margin-right: 10px;
+  font-size: 18px;
+}
+span#links a {
+  margin-left: 5px;
+}
 
 ol li img {
   margin: 15px 0 15px 0;
@@ -319,6 +261,10 @@ ul.release_notes li {
 
 h2 {
   margin-top: 50px;
+}
+
+body#help img {
+  margin-bottom: 30px;
 }
 
 /* =============================================================================

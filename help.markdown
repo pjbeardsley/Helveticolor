@@ -1,24 +1,38 @@
 ---
 layout: default
 title: Help
-id: interior
+class: interior
+id: help
 ---
 
 ## What versions of OS X does Helveticolor support?
 
-Helveticolor supports OS X 10.7 (Lion) and up.
+Helveticolor supports OS X 10.7 (Lion) and OS X 10.8 (Mountain Lion).
 
 ## How do I install Helveticolor?
 
-- On OS X 10.7 (Lion), simply unzip Helveticolor and double-click on `Helveticolor.saver`.
+On OS X 10.7 (Lion), simply unzip Helveticolor and double-click on `Helveticolor.saver`.
 
-- On OS X 10.8 (Mountain Lion), the proccess is a bit more involved because Helveticolor
+On OS X 10.8 (Mountain Lion), the proccess is a bit more involved due to the fact that Helveticolor
 is an unsigned app.[^1]
 
-  1. Unzip Helveticolor and right-click on `Helveticolor.saver`.  Choose `Open`. ![Open](/Helveticolor/img/helveticolor_open.png)
-  2. A dialog will appear to confirm the opening of an unsigned application—click `Open`. ![Are You Sure](/Helveticolor/img/helveticolor_are_you_sure.png)
-  3. In System Preferences, a sheet will determine which users Helveticolor will be installed for—typically 'Install for this user only' is sufficient. ![Install for user](/Helveticolor/img/helveticolor_install_for_user.png)
+Unzip Helveticolor and right-click on `Helveticolor.saver`.  Choose `Open`:
 
+![Open](/Helveticolor/img/helveticolor_open.png)
+    
+
+A dialog will appear to confirm the opening of an unsigned application—click `Open`:
+
+![Are You Sure](/Helveticolor/img/helveticolor_are_you_sure.png)
+    
+
+
+
+
+In System Preferences, a sheet will determine which users Helveticolor will be installed for—typically 'Install for this user only' is sufficient:
+
+![Install for user](/Helveticolor/img/helveticolor_install_for_user.png)
+    
 ## What are Helveticolor's licensing terms?
 
 Helveticolor is licensed under the [MIT License](http://opensource.org/licenses/mit-license.php).  The project source is available on [Github](https://github.com/pjbeardsley/Helveticolor).

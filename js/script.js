@@ -28,4 +28,16 @@ $(function () {
 			3000
 		);
 	}
+
+	$('#download').click(function() {
+		_gaq.push(['_trackEvent', 'Downloads', 'Header Download']);
+	});
+
+	$('.download_button').click(function() {
+		_gaq.push(['_trackEvent', 'Downloads', 'Button Download']);
+	});
+
+	$('.release_notes_download').click(function() {
+		_gaq.push(['_trackEvent', 'Downloads', 'Release Notes Download']);
+	});
 });
