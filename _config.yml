@@ -13,6 +13,6 @@ navigation:
   icon: icon-pencil
 - text: Download
   id: download
-  url: https://github.com/downloads/pjbeardsley/Helveticolor/Helveticolor_0.1.0.zip
+  url: http://pjbeardsley.net/helveticolor/Helveticolor_0.1.1.zip
   icon: icon-download
 layout: default

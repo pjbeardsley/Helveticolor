@@ -7,13 +7,13 @@ id: help
 
 ## What versions of OS X does Helveticolor support?
 
-Helveticolor supports OS X 10.7 (Lion) and OS X 10.8 (Mountain Lion).
+Helveticolor supports OS X 10.7 (Lion), OS X 10.8 (Mountain Lion) and OS X 10.9 (Mavericks).
 
 ## How do I install Helveticolor?
 
 On OS X 10.7 (Lion), simply unzip Helveticolor and double-click on `Helveticolor.saver`.
 
-On OS X 10.8 (Mountain Lion), the proccess is a bit more involved due to the fact that Helveticolor
+On OS X 10.8 (Mountain Lion) and later, the proccess is a bit more involved due to the fact that Helveticolor
 is an unsigned app.[^1]
 
 Unzip Helveticolor and right-click on `Helveticolor.saver`.  Choose `Open`:
