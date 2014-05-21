@@ -20,15 +20,15 @@
 @property (assign) int curPaletteIndex;
 @property (assign) bool firstTime;
 @property (assign) int curOrientation;
-@property (retain) id configSheet;
-@property (retain) id colourLoversLink;
-@property (retain) id paletteChangeIntervalSlider;
-@property (retain) id showPaletteTypePopUpButton;
-@property (retain) NSMutableArray *palettes;
+@property (strong) id configSheet;
+@property (strong) id colourLoversLink;
+@property (strong) id paletteChangeIntervalSlider;
+@property (strong) id showPaletteTypePopUpButton;
+@property (strong) NSMutableArray *palettes;
 @property (assign) int paletteChangeInterval;
-@property (retain) NSDate *paletteLastChanged;
-@property (retain) NSURLConnection *xmlConnection;
-@property (retain) NSMutableData *xmlData;
+@property (strong) NSDate *paletteLastChanged;
+@property (strong) NSURLConnection *xmlConnection;
+@property (strong) NSMutableData *xmlData;
 
 - (void)refreshPaletteListForType:(int) showPalettesType;
 

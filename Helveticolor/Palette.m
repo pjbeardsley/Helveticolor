@@ -52,8 +52,8 @@ static NSString * const kColorsNSCodingKey   = @"Colors";
     NSXMLNode *curNode;
 
     while (curNode = [e nextObject]) {
-        [self.colors addObject:[[[Color alloc]initWithHexValue: [curNode objectValue]
-            andWidth: [widths objectAtIndex:[curNode index]]] autorelease]];
+        [self.colors addObject:[[Color alloc]initWithHexValue: [curNode objectValue]
+            andWidth: [widths objectAtIndex:[curNode index]]]];
     }
         
     return self;

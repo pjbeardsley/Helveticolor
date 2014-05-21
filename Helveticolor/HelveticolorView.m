@@ -34,8 +34,6 @@ static int const kMaxPaletteChangeInterval                = 9;
 // miscellaneous constants
 static double const kAnimationTimeInterval          =   3.0;
 static double const kColorBrightnessThreshold       =   0.9;
-static double const kColourLoversLogoRGBValuesUpper = 193.0;
-static double const kColourLoversLogoRGBValuesLower = 239.0;
 
 // scaling "magic number" constants
 static double const kSplashScreenTitleFontSizeScale        = 0.25;
@@ -97,16 +95,16 @@ typedef enum {
             
     }
             
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:url
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url
         cachePolicy:NSURLRequestUseProtocolCachePolicy
-        timeoutInterval:3] autorelease];
+        timeoutInterval:3];
     [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
     
     self.xmlData = [NSMutableData data];
 
-    self.xmlConnection = [[[NSURLConnection alloc] initWithRequest:request
+    self.xmlConnection = [[NSURLConnection alloc] initWithRequest:request
         delegate:self
-        startImmediately:YES] autorelease];
+        startImmediately:YES];
     
 }
 
@@ -121,7 +119,7 @@ typedef enum {
     }
     
     NSError *error          = nil;
-    NSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithData:self.xmlData options:0 error:&error] autorelease];
+    NSXMLDocument *xmlDoc = [[NSXMLDocument alloc] initWithData:self.xmlData options:0 error:&error];
     
     if (!xmlDoc) {
         [self readPalettesFromCache];
@@ -133,7 +131,7 @@ typedef enum {
     NSXMLNode *curNode    = nil;
     
     while (curNode = [e nextObject]) {
-        [self.palettes addObject:[[[Palette alloc]initWithXMLNode: curNode] autorelease]];
+        [self.palettes addObject:[[Palette alloc]initWithXMLNode: curNode]];
     }
     
     [self writePalettesToCache];
@@ -243,7 +241,7 @@ typedef enum {
 
 - (void) drawSplashScreen
 {
-    Color *color = [[[Color alloc]initWithHexValue: @"333333" andWidth:[NSNumber numberWithFloat:1.0]] autorelease];
+    Color *color = [[Color alloc]initWithHexValue: @"333333" andWidth:[NSNumber numberWithFloat:1.0]];
     [[color colorValue] set];
     
     // draw the background
@@ -266,8 +264,8 @@ typedef enum {
         textColor, NSForegroundColorAttributeName,
         nil];
     
-    NSAttributedString *attributedText = [[[NSAttributedString alloc] initWithString:
-        @"Helveticolor" attributes: textAttributes] autorelease];
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:
+        @"Helveticolor" attributes: textAttributes];
     
     NSSize attrSize = [attributedText size];
     int xOffset     = (rect.size.width / 2) - (attrSize.width / 2);
@@ -284,8 +282,8 @@ typedef enum {
         textColor, NSForegroundColorAttributeName,
         nil];
     
-    attributedText = [[[NSAttributedString alloc] initWithString:
-        @"http://pjbeardsley.github.com/Helveticolor" attributes: textAttributes] autorelease];
+    attributedText = [[NSAttributedString alloc] initWithString:
+        @"http://pjbeardsley.github.com/Helveticolor" attributes: textAttributes];
     
     attrSize = [attributedText size];
     xOffset     = (rect.size.width / 2) - (attrSize.width / 2);
@@ -346,8 +344,8 @@ typedef enum {
             nil];
         
         NSString *hexColorString     = [@"#" stringByAppendingString: curColor.hexValue];
-        NSAttributedString *textAttr = [[[NSAttributedString alloc] initWithString: hexColorString
-            attributes: mainTextAttributes] autorelease];
+        NSAttributedString *textAttr = [[NSAttributedString alloc] initWithString: hexColorString
+            attributes: mainTextAttributes];
         
         int xOffset = 0;
         int yOffset = 0;
@@ -417,8 +415,8 @@ typedef enum {
         textColor, NSForegroundColorAttributeName,
         nil];
     
-    NSMutableAttributedString *mainAttributedText = [[[NSMutableAttributedString alloc] initWithString: hexColorString
-        attributes: mainTextAttributes] autorelease];
+    NSMutableAttributedString *mainAttributedText = [[NSMutableAttributedString alloc] initWithString: hexColorString
+        attributes: mainTextAttributes];
     
     for (int i = 0; i < [hexColorString length]; i++) {
         if (([hexColorString characterAtIndex:i] >= 'A') || ([hexColorString characterAtIndex:i] >= 'F')) {
@@ -441,8 +439,8 @@ typedef enum {
         textColor, NSForegroundColorAttributeName,
         nil];
     
-    NSAttributedString *secondaryAttributedText = [[[NSAttributedString alloc] initWithString: title
-        attributes: secondaryTextAttributes] autorelease];
+    NSAttributedString *secondaryAttributedText = [[NSAttributedString alloc] initWithString: title
+        attributes: secondaryTextAttributes];
         
     attrSize = [secondaryAttributedText size];
     xOffset  = size.width - attrSize.width - (size.width * kSingleColorSecondaryTextXOffsetScale);
@@ -490,7 +488,6 @@ typedef enum {
     // set the attributed string to the NSTextField
     [self.colourLoversLink setAttributedStringValue: string];
     
-    [string release];
 
     // get and set defaults
     ScreenSaverDefaults *defaults = [ScreenSaverDefaults defaultsForModuleWithName:kModuleName];
@@ -531,7 +528,7 @@ typedef enum {
 
 - (void) writePalettesToCache
 {
-    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *cache = [[NSMutableDictionary alloc] init];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.palettes];
     
     [cache setObject:data forKey:kCacheKey];
@@ -541,8 +538,8 @@ typedef enum {
 
 - (void) readPalettesFromCache
 {
-    NSMutableDictionary *cache = [[[NSMutableDictionary alloc] initWithContentsOfFile:
-        [kCacheFilePath stringByExpandingTildeInPath]] autorelease];
+    NSMutableDictionary *cache = [[NSMutableDictionary alloc] initWithContentsOfFile:
+        [kCacheFilePath stringByExpandingTildeInPath]];
     NSData *data = [cache objectForKey:kCacheKey];
     
     if (data) {
@@ -551,18 +548,18 @@ typedef enum {
         // no palette cache found-- manually add a fallback palette.
         NSMutableArray *defaultColors = [NSMutableArray array];
         
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"2F798C"
-            andWidth: [NSNumber numberWithFloat:0.035]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"463E3B"
-            andWidth: [NSNumber numberWithFloat:0.365]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"B5AA2A"
-            andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"BA591D"
-            andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
-        [defaultColors addObject: [[[Color alloc]initWithHexValue: @"E77D90"
-            andWidth: [NSNumber numberWithFloat:0.2]] autorelease]];
+        [defaultColors addObject: [[Color alloc]initWithHexValue: @"2F798C"
+            andWidth: [NSNumber numberWithFloat:0.035]]];
+        [defaultColors addObject: [[Color alloc]initWithHexValue: @"463E3B"
+            andWidth: [NSNumber numberWithFloat:0.365]]];
+        [defaultColors addObject: [[Color alloc]initWithHexValue: @"B5AA2A"
+            andWidth: [NSNumber numberWithFloat:0.2]]];
+        [defaultColors addObject: [[Color alloc]initWithHexValue: @"BA591D"
+            andWidth: [NSNumber numberWithFloat:0.2]]];
+        [defaultColors addObject: [[Color alloc]initWithHexValue: @"E77D90"
+            andWidth: [NSNumber numberWithFloat:0.2]]];
         
-        Palette *defaultPalette = [[[Palette alloc] initWithArray: defaultColors] autorelease];
+        Palette *defaultPalette = [[Palette alloc] initWithArray: defaultColors];
         defaultPalette.title = @"";
         defaultPalette.userName = @"";
         [self.palettes addObject: defaultPalette];

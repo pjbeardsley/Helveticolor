@@ -17,7 +17,7 @@
 
 @property (copy) NSString *title;
 @property (copy) NSString *userName;
-@property (retain) NSMutableArray *colors;
+@property (strong) NSMutableArray *colors;
 
 - (id) initWithXMLNode: (NSXMLNode *)node;
 - (id) initWithArray: (NSMutableArray *)array;
